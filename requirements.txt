@@ -7,8 +7,7 @@ seaborn
 notebook
 nltk
 transformers
-streamlit==1.11.0
-wordcloud
+streamlit==1.11.1
 # Something I found online which helps us
 google-api-python-client
 
