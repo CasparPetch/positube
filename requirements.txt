@@ -7,12 +7,12 @@ seaborn
 notebook
 nltk
 transformers
-streamlit==1.23.0
+streamlit==1.11.1
 # Something I found online which helps us
 google-api-python-client
 
 # Protobuf - no need to worry about this it is just a M1 chip thingy
-protobuf==3.19.0
+protobuf==3.19.6
 
 
 # Trick to install the version of Tensorflow depending on your processor: darwin == Mac, ARM == M1
