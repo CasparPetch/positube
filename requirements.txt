@@ -7,6 +7,7 @@ seaborn
 notebook
 nltk
 transformers
+streamlit==1.23.0
 # Something I found online which helps us
 google-api-python-client
 
