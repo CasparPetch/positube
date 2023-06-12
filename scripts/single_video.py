@@ -12,6 +12,11 @@ from nltk.corpus import words
 from nltk.tokenize import word_tokenize
 from nltk import download
 import os
+from icecream import ic
+ic.disable()
+
+download('words')
+english_words = set(words.words())
 
 
 # video_id = 'SGqg_ZzThDU'
@@ -23,11 +28,9 @@ def single_video_process(video_id):
 
     ### Cleaning Dataset
 
-    download('words')
-
     def clean_and_filter(df):
         def remove_newline(text):
-            text = text.replace('\n', '')
+            text = text.replace('\n', ' ')
             return text
 
         def remove_punctuation(text):
@@ -38,12 +41,14 @@ def single_video_process(video_id):
         def lowercase (text):
             lowercased = text.lower()
             return lowercased
+        ic("Removing newlines")
+        clean_comments = df.comment.apply(remove_newline)
+        ic("Removing punctuation")
+        clean_comments = clean_comments.apply(remove_punctuation)
+        ic("Applying lowercase")
+        clean_comments = clean_comments.apply(lowercase)
 
-        df['comment_clean'] = df.comment.apply(remove_newline)
-        df['comment_clean'] = df.comment_clean.apply(remove_punctuation)
-        df['comment_clean'] = df.comment_clean.apply(lowercase)
 
-        english_words = set(words.words())
         def is_english(text):
             words_in_comment = word_tokenize(text)
             num_words_in_comment = len(words_in_comment)
@@ -60,9 +65,9 @@ def single_video_process(video_id):
                 return False
 
         def english_only(df):
-            df['english'] = df['comment_clean'].apply(is_english)
+            df['english'] = clean_comments.apply(is_english)
             return df
-
+        ic("Filtering english")
         df = english_only(df)
 
         def remove_non_english_symbols(text):
@@ -70,8 +75,8 @@ def single_video_process(video_id):
             cleaned_text = re.sub(english_pattern, '', text)
             return cleaned_text
 
-
-        df['comment_clean'] = df.comment_clean.apply(remove_non_english_symbols)
+        ic("Removing non english symbols")
+        df['comment_clean'] = clean_comments.apply(remove_non_english_symbols)
 
         return df[df["english"] == True]
 
@@ -248,6 +253,7 @@ def single_video_process(video_id):
         details = pd.DataFrame(fetch_details(video_id, api_key))
         comments_relevance = pd.DataFrame(fetch_comments_relevance(video_id, api_key))
         stats = pd.DataFrame(fetch_stats(video_id, api_key))
+        # breakpoint()
         channel = pd.DataFrame([fetch_channel(details['channel_id'][0], api_key)])
         info_all = pd.concat([stats,details],axis=1)
         comments_relevance["video_id"] = video_id
