@@ -14,7 +14,7 @@ from nltk import download
 import os
 
 
-# video_id = 'SGqg_ZzThDU'
+video_id = 'SGqg_ZzThDU'
 # video_id
 
 ### Defining .env and API Key
