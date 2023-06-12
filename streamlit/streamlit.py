@@ -1,83 +1,75 @@
 import pandas as pd
-# import csv
 import streamlit as st
-
-def csv_to_doc(csv_file):
-    df = pd.read_csv(csv_file, index_col=0)
-    output_str = ""
-    for row in df.iterrows():
-        output_str += row[1]['comment']
-    return output_str
-
 from PIL import Image
+from wordcloud import WordCloud, STOPWORDS, ImageColorGenerator
+
 import numpy as np
 import matplotlib.pyplot as plt
 import streamlit as st
 from wordcloud import WordCloud, STOPWORDS, ImageColorGenerator
+import os
+import random
 
 
-def cloud(image, text, max_word, max_font, random):
+def csv_to_doc(csv_file):
+    df = pd.read_csv(csv_file, index_col=0)
+    pos_str = ""
+    neg_str = ""
+    for _, row in df.iterrows():
+        if row['Sentiment'] == 'Positive':
+            pos_str += row['Comment']
+        elif row['Sentiment'] == 'Negative':
+            neg_str += row['Comment']
+    return pos_str, neg_str
+
+def cloud(mask, max_word, max_font, random_):
     stopwords = set(STOPWORDS)
     stopwords.update(['us', 'one', 'will', 'said', 'now', 'well', 'man', 'may',
     'little', 'say', 'must', 'way', 'long', 'yet', 'mean',
     'put', 'seem', 'asked', 'made', 'half', 'much',
     'certainly', 'might', 'came'])
 
-    # create coloring from image
-    image_colors = ImageColorGenerator(image)
 
-    wc = WordCloud(background_color="white", max_words=max_word, mask=image,
-    stopwords=stopwords, max_font_size=max_font, random_state=random, color_func=image_colors)
+    positive_str, negative_str = csv_to_doc('comment_score.csv')
 
-    # generate word cloud
-    wc.generate(text)
+    wc = WordCloud(mask=mask, background_color="white", max_words=max_word,
+    stopwords=stopwords, max_font_size=max_font, random_state=random_)
 
-    # create coloring from image
-    image_colors = ImageColorGenerator(image)
+    wc_neg = WordCloud(mask=mask, background_color="white", max_words=max_word,
+    stopwords=stopwords, max_font_size=max_font, random_state=random_)
 
-    # show the figure
-    plt.figure(figsize=(100,100))
+    wc_image = wc.generate(positive_str)
+    wc_image2 = wc_neg.generate(negative_str)
 
-    # Display thumbnail!
+    fig, axes = plt.subplots(1,2, gridspec_kw={'width_ratios': [2, 2]})
+    axes[0].imshow(wc_image.recolor(colormap='Greens'), interpolation="bilinear")
+    axes[1].imshow(wc_image2.recolor(colormap='Reds'), interpolation='bilinear')
+    for ax in axes:
+        ax.set_axis_off()
 
-    # for f in $MOVIEDIR
-    # do
-    # ffmpeg -i "$f" -t 2 -r 0.5 "$f"%d.jpg
-    # done
-
-    # Display two images!
-
-    # fig, axes = plt.subplots(1,2, gridspec_kw={'width_ratios': [3, 2]})
-    # axes[0].imshow(wc, interpolation="bilinear")
-    # axes[1].imshow(image, interpolation='bilinear')
-    # for ax in axes:
-    #     ax.set_axis_off()
-
-    # Display one image!
-
-    fig, ax = plt.subplots()
-    ax.imshow(wc, interpolation='bilinear')
-    ax.set_axis_off()
-
-    # Show images on streamlit
+     # Show images on streamlit
     st.pyplot(fig)
 
 def main():
-    output_str = csv_to_doc('comments0_95.csv')
+    # positive_str, negative_str = csv_to_doc('comment_score.csv')
+
     st.write("# Text Summarization with a WordCloud")
     st.write("[By Boadzie Daniel](https://boadzie.surge.sh)")
     max_word = st.sidebar.slider("Max words", 200, 3000, 200)
     max_font = st.sidebar.slider("Max Font Size", 50, 350, 60)
-    random = st.sidebar.slider("Random State", 30, 100, 42 )
-    image = st.file_uploader("Choose a file(preferably a silhouette)")
-    # text = st.text_area("Add text ..")
-    if image and output_str is not None:
+    random_ = st.sidebar.slider("Random State", 30, 100, 42)
+    channel_id = st.text_input("Enter Channel ID")
+    if channel_id is not None:
         if st.button("Plot"):
             st.write("### Original image")
-            mask = np.array(Image.open(image))
-            # st.image(image, width=100, use_column_width=True)
             st.write("### Word cloud")
-            st.write(cloud(mask, output_str, max_word, max_font, random), use_column_width=True)
 
-if __name__=="__main__":
-  main()
+
+    mask_image = np.array(Image.open('yt_logo.png'))
+    st.image(mask_image, use_column_width=True)
+
+
+    st.write(cloud(mask=mask_image, max_word=max_word, max_font=max_font, random_=random_), use_column_width=True)
+
+if __name__ == "__main__":
+    main()
