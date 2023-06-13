@@ -12,7 +12,9 @@ import random
 
 
 def csv_to_doc(csv_file):
-    df = pd.read_csv(csv_file, index_col=0)
+    current_directory = os.getcwd()
+    path = os.path.join(current_directory, 'streamlit', csv_file)
+    df = pd.read_csv(path, index_col=0)
     pos_str = ""
     neg_str = ""
     for _, row in df.iterrows():
@@ -65,7 +67,9 @@ def main():
             st.write("### Word cloud")
 
 
-    mask_image = np.array(Image.open('yt_logo.png'))
+    image_filename = "yt_logo.png"
+    current_directory = os.getcwd()
+    mask_image = os.path.join(current_directory, 'streamlit', image_filename)
     st.image(mask_image, use_column_width=True)
 
 
