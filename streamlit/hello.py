@@ -20,7 +20,7 @@ st.sidebar.success("Select a demo below.")
 
 def csv_to_doc(csv_file):
     current_directory = os.getcwd()
-    path = os.path.join(current_directory, 'streamlit', csv_file)
+    path = os.path.join(current_directory, 'streamlit', 'pages', csv_file)
     df = pd.read_csv(path, index_col=0)
     pos_str = ""
     neg_str = ""
