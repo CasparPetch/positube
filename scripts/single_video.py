@@ -125,8 +125,8 @@ def single_video_process(video_id):
         nextPageToken = None
         iter_number = 0
         token_count = 0
-        while len(comments) < 200:
-            print(f"Tokens used: {token_count}")
+        while len(comments) < 50:
+            # print(f"Tokens used: {token_count}")
 
             if nextPageToken:
                 url = f"https://www.googleapis.com/youtube/v3/commentThreads?part=snippet&videoId={video_id}&key={api_key}&maxResults=100&order=relevance"
@@ -185,7 +185,7 @@ def single_video_process(video_id):
             data = data.get("items",False)
             if data:
                 views = data[0]["statistics"]["viewCount"]
-                likes = data[0]["statistics"]["likeCount"]
+                likes = data[0]["statistics"].get("likeCount",0)
                 comments = data[0]["statistics"].get("commentCount",0)
                 dict_ = {"views":[views], "likes":[likes], "comments":[comments]}
                 return dict_
@@ -212,7 +212,7 @@ def single_video_process(video_id):
                 channel_id = data[0]["snippet"]["channelId"]
                 title = data[0]["snippet"]["title"]
                 description = data[0]["snippet"]["description"]
-                thumbnail = data[0]["snippet"]["thumbnails"]["maxres"]["url"]
+                thumbnail = data[0]["snippet"]["thumbnails"].get("maxres",{0:0}).get("url",0)
                 channel_title = data[0]["snippet"]["channelTitle"]
                 tags = data[0]["snippet"].get("tags",[""])
                 genre = genre_dict[data[0]["snippet"]["categoryId"]]

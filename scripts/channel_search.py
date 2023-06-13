@@ -4,7 +4,8 @@ import pandas as pd
 
 
 def grab_channel(channel_name):
-    num_videos = 2
+    num_videos = 10
+    print("hello")
     # channel_name = 'PewDiePie'
 
     channelsSearch = ChannelsSearch(channel_name, limit = 1)
