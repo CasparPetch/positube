@@ -9,6 +9,9 @@ nltk
 transformers
 streamlit==1.11.1
 altair<5
+icecream
+youtube-search-python
+
 # Something I found online which helps us
 google-api-python-client
 
@@ -20,6 +23,7 @@ protobuf==3.19.6
 tensorflow-macos==2.10.0; sys_platform == 'darwin' and 'ARM' in platform_version # Mac M-chips
 tensorflow==2.10.0; sys_platform == 'darwin' and 'ARM' not in platform_version # Mac Intel chips
 tensorflow==2.10.0; sys_platform != 'darwin' # Windows & Ubuntu Intel chips
+
 
 # Jupyter Notebook - like the old times thanks to Mark!
 jupyter-contrib-core==0.4.0
