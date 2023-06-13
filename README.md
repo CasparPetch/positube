@@ -1,3 +1,29 @@
-Heyaaaaa, this is a test
+# PosiTube
 
-![image](https://github.com/CasparPetch/positube/assets/120754489/5e080d0f-93c3-4b1f-b2d2-2f5a1e41a46c)
+Positube is an app which predicts YouTube video dislikes based on sentiment analysis of the comments.
+
+
+## Usage
+
+```python
+from positube import roberta
+
+# return a df with the positivity score of a video
+roberta('PewDiePie')
+
+
+```
+
+## Tools
+![](https://www.vectorlogo.zone/logos/python/python-ar21.svg)
+![](https://www.vectorlogo.zone/logos/tensorflow/tensorflow-ar21.svg)
+![](https://www.vectorlogo.zone/logos/numpy/numpy-ar21.svg)
+
+
+## Our Goal
+
+In late 2021, YouTube removed the option to dislike a video. We have created the PosiTube App which tries to predict the number of dislikes on each video based on the positivity/negativity of each comment.
+
+## Hypothesis 
+
+Our hypothesis was - can we use sentiment analysis on youtube comments to predict the number of dislikes each video would have? The answer: NO!
