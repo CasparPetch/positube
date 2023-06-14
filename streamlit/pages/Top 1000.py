@@ -112,10 +112,7 @@ def get_useful_stats(df):
 positube_path = os.path.dirname(os.path.dirname(os.path.dirname(__file__)))
 
 st.set_page_config(page_title="DataFrame Demo", page_icon="📊")
-from utils import add_logo
 
-
-add_logo()
 st.markdown("# Top 1000 popular channels")
 st.sidebar.header("Top 1000")
 st.write(
