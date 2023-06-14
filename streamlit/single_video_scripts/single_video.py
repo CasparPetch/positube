@@ -1,7 +1,7 @@
 # Fetching data from a single video
 
 # my function imports
-from fetch_all_info import fetch_all_info
+from single_video_scripts.fetch_all_info import fetch_all_info
 
 ### Importing Packages
 import os

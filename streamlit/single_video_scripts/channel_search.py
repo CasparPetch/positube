@@ -2,7 +2,7 @@ from youtubesearchpython import *
 import pandas as pd
 
 # my function import
-from single_video import single_video_process
+from single_video_scripts.single_video import single_video_process
 
 from icecream import ic
 ic.disable()
@@ -45,6 +45,9 @@ def grab_channel(channel_name):
         info, comment = single_video_process(video)
         infos.append(info)
         comments.append(comment)
-    return pd.concat(comments), pd.concat(infos)
+    full_comments = pd.concat(comments)
+    full_infos = pd.concat(infos)
+    stats = infos[0]
+    return full_comments, full_infos, stats
 
 # grab_channel("PewDiePie")
