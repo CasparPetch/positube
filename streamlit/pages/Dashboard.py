@@ -5,18 +5,19 @@ from wordcloud import WordCloud, STOPWORDS, ImageColorGenerator
 import numpy as np
 import matplotlib.pyplot as plt
 import streamlit as st
-# from scripts.channel_search import grab_channel
-from wordcloud import WordCloud, STOPWORDS, ImageColorGenerator
+from scripts.channel_search import grab_channel
 import os
 import random
 
-st.set_page_config(page_title="Dashboard", page_icon="📈")
+for key in st.session_state.keys():
+    st.session_state[key] = None
 
-st.markdown("# Dashboard")
-st.sidebar.header("Dashboard")
+st.set_page_config(page_title="Channel Dashboard", page_icon="📈")
+
+st.markdown("# Channel Dashboard")
+st.sidebar.header("Channel Dashboard")
 st.write(
-    """This demo illustrates a combination of plotting and animation with
-Streamlit. We're generating a bunch of random numbers in a loop for around
+    """We're generating a bunch of random numbers in a loop for around
 5 seconds. Enjoy!"""
 )
 
@@ -25,43 +26,59 @@ st.text("")
 
 # Enter channel ID
 
-channel_id = st.text_input("Enter Channel ID")
+channel_name = st.text_input("Enter Channel ID")
 # comments_df = grab_channel(channel_id)
-if channel_id is not None:
+if channel_name is not None:
     if st.button("Tube me"):
-        st.write("### Bar chart")
-        st.write("### Visualization")
+        st.write('YOU PRESSED A BUTTON')
+        st.write(f'searching for channel_id of {channel_name}')
+        st.session_state['channel_name'] = channel_name
+
+
+if 'channel_name' in st.session_state.keys():
+    channel_df = grab_channel(st.session_state['channel_name'])
+    st.session_state['channel_df'] = channel_df
 
 # Line breaks
 
 st.text("")
 st.text("")
 
-# Basic Statistics
+if 'channel_df' in st.session_state.keys():
+    st.write(type(st.session_state['channel_df']))
+    st.write(st.session_state['channel_df'])
+    st.write(type(st.session_state['channel_df'][0]))
+    st.write(st.session_state['channel_df'][0])
 
-st.caption(f"Pewdiepie has 50 million views")
-st.caption('Pewdiepie has 400,340 subscribers')
-st.caption('Pewdiepie has 135 videos')
-st.caption('Pewdiepie is generally positive amongst viewers')
+    # Basic Statistics
+    view_count = 0
+    subscriber_count = 0
+    video_count = 0
+    sentiment_description = ''
 
-# Charts and Bars
-# 1
-chart_data = pd.DataFrame(
-    np.random.randn(20, 3),
-    columns=["Video", "Views", "ID"])
+    st.caption(f"Pewdiepie has {view_count} views")
+    st.caption(f'Pewdiepie has {subscriber_count} subscribers')
+    st.caption(f'Pewdiepie has {video_count} videos')
+    st.caption(f'Pewdiepie is {sentiment_description} amongst viewers')
 
-st.bar_chart(chart_data)
+    # Charts and Bars
+    # 1
+    chart_data = pd.DataFrame(
+        np.random.randn(20, 3),
+        columns=["Video", "Views", "ID"])
 
-# 2
-arr = np.random.normal(1, 1, size=100)
-fig, ax = plt.subplots()
-ax.hist(arr, bins=20)
+    st.bar_chart(chart_data)
 
-st.pyplot(fig)
+    # 2
+    arr = np.random.normal(1, 1, size=100)
+    fig, ax = plt.subplots()
+    ax.hist(arr, bins=20)
 
-# 3
-chart_data = pd.DataFrame(
-    np.random.randn(20, 3),
-    columns=['a', 'b', 'c'])
+    st.pyplot(fig)
 
-st.area_chart(chart_data)
+    # 3
+    chart_data = pd.DataFrame(
+        np.random.randn(20, 3),
+        columns=['a', 'b', 'c'])
+
+    st.area_chart(chart_data)
