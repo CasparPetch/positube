@@ -1,13 +1,12 @@
 import pandas as pd
-import streamlit as st
-from PIL import Image
-from wordcloud import WordCloud, STOPWORDS, ImageColorGenerator
 import numpy as np
 import matplotlib.pyplot as plt
 import streamlit as st
-from scripts.channel_search import grab_channel
-import os
-import random
+# from PIL import Image
+# from wordcloud import WordCloud, STOPWORDS, ImageColorGenerator
+
+# my function import
+from single_video_scripts.channel_search import grab_channel
 
 for key in st.session_state.keys():
     st.session_state[key] = None
