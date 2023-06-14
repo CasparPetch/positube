@@ -16,8 +16,8 @@ st.set_page_config(page_title="Channel Dashboard", page_icon="📈")
 st.markdown("# Channel Dashboard")
 st.sidebar.header("Channel Dashboard")
 st.write(
-    """We're generating a bunch of random numbers in a loop for around
-5 seconds. Enjoy!"""
+    """We're still generating a bunch of random numbers because the dataframe
+    is a huge headache """
 )
 
 st.text("")
@@ -27,57 +27,66 @@ st.text("")
 
 channel_name = st.text_input("Enter Channel ID")
 # comments_df = grab_channel(channel_id)
-if channel_name is not None:
-    if st.button("Tube me"):
-        st.write('YOU PRESSED A BUTTON')
+if st.button("Tube me"):
+    if channel_name is not None:
+        # st.write('YOU PRESSED A BUTTON')
         st.write(f'searching for channel_id of {channel_name}')
         st.session_state['channel_name'] = channel_name
+    else:
+        st.write('Pick a channel dummy!')
 
 
-if 'channel_name' in st.session_state.keys():
-    channel_df = grab_channel(st.session_state['channel_name'])
-    st.session_state['channel_df'] = channel_df
+    if 'channel_name' in st.session_state.keys():
+        channel_df, channel_info, channel_stats = grab_channel(st.session_state['channel_name'])
+        st.session_state['channel_df'] = channel_df
+        st.session_state['channel_info'] = channel_info
+        st.session_state['channel_stats'] = channel_stats
 
-# Line breaks
+    # Line breaks
 
-st.text("")
-st.text("")
+    st.text("")
+    st.text("")
 
-if 'channel_df' in st.session_state.keys():
-    st.write(type(st.session_state['channel_df']))
-    st.write(st.session_state['channel_df'])
-    st.write(type(st.session_state['channel_df'][0]))
-    st.write(st.session_state['channel_df'][0])
+    # if 'channel_df' in st.session_state.keys():
+    #     st.write(st.session_state['channel_df'])
 
-    # Basic Statistics
-    view_count = 0
-    subscriber_count = 0
-    video_count = 0
-    sentiment_description = ''
+    # if 'channel_info' in st.session_state.keys():
+    #     st.write(st.session_state['channel_info'])
+    #     st.write(type(st.session_state['channel_info']))
 
-    st.caption(f"Pewdiepie has {view_count} views")
-    st.caption(f'Pewdiepie has {subscriber_count} subscribers')
-    st.caption(f'Pewdiepie has {video_count} videos')
-    st.caption(f'Pewdiepie is {sentiment_description} amongst viewers')
+    if 'channel_stats' in st.session_state.keys():
+    #     st.write(st.session_state['channel_stats'])
+    #     st.write(type(st.session_state['channel_stats']))
 
-    # Charts and Bars
-    # 1
-    chart_data = pd.DataFrame(
-        np.random.randn(20, 3),
-        columns=["Video", "Views", "ID"])
+        # Basic Statistics
+        view_count = st.session_state['channel_stats']['Total_Views'].values[0]
+        subscriber_count = st.session_state['channel_stats']['Sub_Count'].values[0]
+        video_count = st.session_state['channel_stats']['Video_Count'].values[0]
+        sentiment_description = 'WE NEED TO ADD THIS'
 
-    st.bar_chart(chart_data)
+        st.caption(f"Pewdiepie has {view_count} views")
+        st.caption(f'Pewdiepie has {subscriber_count} subscribers')
+        st.caption(f'Pewdiepie has {video_count} videos')
+        st.caption(f'Pewdiepie is {sentiment_description} amongst viewers')
 
-    # 2
-    arr = np.random.normal(1, 1, size=100)
-    fig, ax = plt.subplots()
-    ax.hist(arr, bins=20)
+        # Charts and Bars
+        # 1
+        chart_data = pd.DataFrame(
+            np.random.randn(20, 3),
+            columns=["Video", "Views", "ID"])
 
-    st.pyplot(fig)
+        st.bar_chart(chart_data)
 
-    # 3
-    chart_data = pd.DataFrame(
-        np.random.randn(20, 3),
-        columns=['a', 'b', 'c'])
+        # 2
+        arr = np.random.normal(1, 1, size=100)
+        fig, ax = plt.subplots()
+        ax.hist(arr, bins=20)
 
-    st.area_chart(chart_data)
+        st.pyplot(fig)
+
+        # 3
+        chart_data = pd.DataFrame(
+            np.random.randn(20, 3),
+            columns=['a', 'b', 'c'])
+
+        st.area_chart(chart_data)

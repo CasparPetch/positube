@@ -1,9 +1,7 @@
 import pandas as pd
 import requests
-# streamlit import
-# from single_video_scripts.cleaning_functions import clean_and_filter
-# vs code import
-from cleaning_functions import clean_and_filter
+# my function imports
+from single_video_scripts.cleaning_functions import clean_and_filter
 
 # temporary
 from icecream import ic

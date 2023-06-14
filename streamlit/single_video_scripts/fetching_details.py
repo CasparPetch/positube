@@ -1,5 +1,4 @@
 import requests
-# temporary
 from icecream import ic
 ic.disable()
 

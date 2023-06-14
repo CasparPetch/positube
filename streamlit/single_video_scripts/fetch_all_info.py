@@ -1,8 +1,8 @@
 # my function imports
-from fetching_details import fetch_details
-from fetch_channel import fetch_channel
-from fetch_stats import fetch_stats
-from comments_relevance import fetch_comments_relevance
+from single_video_scripts.fetching_details import fetch_details
+from single_video_scripts.fetch_channel import fetch_channel
+from single_video_scripts.fetch_stats import fetch_stats
+from single_video_scripts.comments_relevance import fetch_comments_relevance
 import pandas as pd
 
 # temporary
