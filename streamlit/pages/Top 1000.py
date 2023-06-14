@@ -11,6 +11,10 @@ from pandas.api.types import (
 )
 from scripts.channel_search import grab_channel
 from scripts.roberta_demo_day import roberta
+from utils import add_logo
+
+
+add_logo()
 
 def filter_dataframe(df: pd.DataFrame) -> pd.DataFrame:
     """

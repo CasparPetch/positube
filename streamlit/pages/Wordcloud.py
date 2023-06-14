@@ -11,6 +11,10 @@ import os
 import random
 from single_video_scripts.single_video import single_video_process
 from single_video_scripts.channel_search import grab_channel
+from utils import add_logo
+
+
+add_logo()
 st.set_page_config(page_title="Word Cloud", page_icon="📊")
 
 st.markdown("# Word Cloud")
