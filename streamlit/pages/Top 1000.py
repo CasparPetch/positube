@@ -88,33 +88,104 @@ def filter_dataframe(df: pd.DataFrame) -> pd.DataFrame:
 
     return df
 
+
+def get_useful_stats(df):
+
+    channels = list(df.value_counts("channel_id").keys())
+
+    new_df = pd.DataFrame({"channel_id":[], "positive":[], "neutral":[], "negative":[], "positivity":[], "controversy":[]})
+    for channel in channels:
+        new_df = pd.concat([pd.DataFrame({"channel_id":channel,
+            "positive":[df[df["channel_id"] == channel]["Positive (%)"].mean()],
+            "neutral":[df[df["channel_id"] == channel]["Neutral (%)"].mean()],
+            "negative":[df[df["channel_id"] == channel]["Negative (%)"].mean()],
+            "positivity":[df[df["channel_id"] == channel]["Scaler_value"].mean()],
+            "controversy":[df[df["channel_id"] == channel]["Positive (%)"].mean() * df[df["channel_id"] == channel]["Negative (%)"].mean() / 100]
+            }), new_df])
+    return new_df.reset_index(drop=True)
+
+
+
 positube_path = os.path.dirname(os.path.dirname(os.path.dirname(__file__)))
 
 st.set_page_config(page_title="DataFrame Demo", page_icon="📊")
 
-st.markdown("# DataFrame top 1000")
-st.sidebar.header("DataFrame top 1000")
+st.markdown("# Top 1000 popular channels")
+st.sidebar.header("Top 1000")
 st.write(
-    """This demo shows how to use `st.write` to visualize Pandas DataFrames.
-(Data courtesy of the [UN Data Explorer](http://data.un.org/Explorer.aspx).)"""
+    """This page allows you to browse the top 1000 most popular channels and compare the stats to a channel of your choice"""
 )
 
 df = pd.read_csv(os.path.join(positube_path, 'raw_data', 'final_channel_data.csv'))
 
 
 
-
+filepath = os.path.join(os.path.abspath("."),"streamlit","data","top_1000.csv")
+top_1000 = pd.read_csv(filepath)
 
 channel_id = st.text_input("Enter Channel ID")
 print(f"Channel ID is {channel_id}")
-if channel_id is not "":
+if channel_id == "":
+    top_1000_stats = get_useful_stats(top_1000)
+    # filter_dataframe(top_1000_stats)
+    sub_stats = pd.read_csv(os.path.join(os.path.abspath("."),"streamlit","data","topSubscribed.csv"))
+    sub_stats["channel_id"] = sub_stats["Youtube Channel"]
+
+
+
+    st.metric(label="Average Negative", value=f'{np.round(top_1000["Negative (%)"].mean(),2)}%',)
+    st.metric(label="Average Neutral", value=f'{np.round(top_1000["Neutral (%)"].mean(),2)}%',)
+    st.metric(label="Average Positive", value=f'{np.round(top_1000["Positive (%)"].mean(),2)}%',)
+    st.metric(label="Overall Positivity", value=f'{np.round(top_1000["Scaler_value"].mean(),2)*100}%')
+    st.dataframe(pd.merge(left=top_1000_stats,right=sub_stats.drop("Youtube Channel",axis=1),how="left",on="channel_id"))
+
+
+
+
+
+elif channel_id == "MrBeast":
+
+    comments = pd.read_csv(os.path.join(positube_path, 'streamlit', 'data', 'mrbeast_comments.csv'))
+    infos = pd.read_csv(os.path.join(positube_path, 'streamlit', 'data', 'mrbeast_infos.csv'))
+    IDs = pd.read_csv(os.path.join(positube_path, 'streamlit', 'data', 'mrbeast_videos.csv'))
+    st.balloons()
+    st.metric(label="Average Negative", value=f'{np.round(comments["Negative (%)"].mean(),2)}%', delta=f'{np.round(comments["Negative (%)"].mean() - top_1000["Negative (%)"].mean(),1)}%', delta_color="inverse")
+    st.metric(label="Average Neutral", value=f'{np.round(comments["Neutral (%)"].mean(),2)}%', delta=f'{np.round(comments["Neutral (%)"].mean() - top_1000["Neutral (%)"].mean(),1)}%', delta_color="off")
+    st.metric(label="Average Positive", value=f'{np.round(comments["Positive (%)"].mean(),2)}%', delta=f'{np.round(comments["Positive (%)"].mean() - top_1000["Positive (%)"].mean(),1)}%', delta_color="normal")
+    # st.metric(label="Overall Positivity", value=f'{np.round(comments["Scaler_value"].mean(),2)*100}%', delta=f'{np.round(comments["Scaler_value"].mean() - top_1000["Scaler_value"].mean(),1)*100}%', delta_color="normal")
+
+    top_1000_stats = get_useful_stats(top_1000)
+    sub_stats = pd.read_csv(os.path.join(os.path.abspath("."),"streamlit","data","topSubscribed.csv"))
+    sub_stats["channel_id"] = sub_stats["Youtube Channel"]
+    st.markdown(f"# Positivity score: {np.round(comments['Scaler_value'].mean(),2)*100}%")
+    if np.round(comments["Scaler_value"].mean() - top_1000["Scaler_value"].mean(),1)*100 > 0:
+        st.markdown(f'### You are {np.round(comments["Scaler_value"].mean() - top_1000["Scaler_value"].mean(),1)*100}% more positive than average!')
+    else:
+        st.markdown(f'### You are {-1*(np.round(comments["Scaler_value"].mean() - top_1000["Scaler_value"].mean(),1)*100)}% less positive than average!')
+
+
+    st.markdown("### The most positive channel is name at x%")
+    st.markdown("### But less positive than name at x%!")
+    st.markdown("### You are more positive than name at x%")
+    st.markdown("### And the least positive channel is name at x%")
+    st.markdown("")
+    st.write(top_1000_stats[["positivity", "channel_id"]])
+    st.dataframe(pd.merge(left=top_1000_stats,right=sub_stats.drop("Youtube Channel",axis=1),how="left",on="channel_id"))
+
+    st.dataframe(comments)
+
+    st.dataframe(pd.merge(left=infos, right=IDs, how="outer", on="video_id"))
+else:
     print("Grabbing channel...")
     comments, infos = grab_channel(channel_id)
 
     print("Processing comments...")
     print("comments")
-    results = roberta(comments)
-
+    comments, IDs = roberta(comments)
     print("Done")
-    filter_dataframe(results)
-    st.write(results)
+
+
+    st.metric(label="Average Negative", value=f'{np.round(comments["Negative (%)"].mean(),2)}%', delta=np.round(comments["Negative (%)"].mean() - top_1000["Negative (%)"].mean(),2), delta_color="inverse")
+    st.metric(label="Average Neutral", value=f'{np.round(comments["Neutral (%)"].mean(),2)}%', delta=np.round(comments["Neutral (%)"].mean() - top_1000["Neutral (%)"].mean(),2), delta_color="off")
+    st.metric(label="Average Positive", value=f'{np.round(comments["Positive (%)"].mean(),2)}%', delta=np.round(comments["Positive (%)"].mean() - top_1000["Positive (%)"].mean(),2), delta_color="normal")
+    st.dataframe(comments)

@@ -13,7 +13,7 @@ def roberta(BIGdf):
     tokenizer = AutoTokenizer.from_pretrained(model_name)
     model = TFAutoModelForSequenceClassification.from_pretrained(model_name)
 
-    API_KEY = os.environ.get('API_KEY')
+    # API_KEY = os.environ.get('API_KEY')
 
     likes = []
 
@@ -47,9 +47,9 @@ def roberta(BIGdf):
 
         '''This function predicts the sentiment score of each youtube video!'''
 
-        model_name = "cardiffnlp/twitter-roberta-base-sentiment"
-        tokenizer = AutoTokenizer.from_pretrained(model_name)
-        model = TFAutoModelForSequenceClassification.from_pretrained(model_name)
+        # model_name = "cardiffnlp/twitter-roberta-base-sentiment"
+        # tokenizer = AutoTokenizer.from_pretrained(model_name)
+        # model = TFAutoModelForSequenceClassification.from_pretrained(model_name)
 
         # Lists to store the sentiment analysis results
         sentiment_list = []
