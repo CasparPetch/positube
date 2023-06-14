@@ -10,6 +10,8 @@ from wordcloud import WordCloud, STOPWORDS, ImageColorGenerator
 import os
 import random
 from st_clickable_images import clickable_images
+import base64
+from streamlit_extras.switch_page_button import switch_page
 
 st.set_page_config(
     page_title="Positube",
@@ -21,53 +23,53 @@ st.sidebar.success("Select a demo below.")
 
 
 # Object notation
-st.sidebar.header("This is the header in the sidebar")
+# st.sidebar.header("This is the header in the sidebar")
 
 
 # "with" notation
-with st.sidebar:
-    st.header("This is the header")
-    st.subheader("This is the subheading")
-    st.write(10+20)
-st.header("Hello")
+# with st.sidebar:
+    # st.header("This is the header")
+    # st.subheader("This is the subheading")
+    # st.write(10+20)
+# st.header("Hello")
 
 
 # Columns
 
-col1, col2 = st.columns(2)
-with col1:
-    st.text("Welcome")
-    st.subheader("Coding101withsteve")
+# col1, col2 = st.columns(2)
+# with col1:
+#     st.text("Welcome")
+#     st.subheader("Coding101withsteve")
 
 
-with col2:
-    st.text("Not welcome")
+# with col2:
+#     st.text("Not welcome")
 
 
-#  Clickable images
 
+images = []
+for file in ["streamlit/Final images/1_copy.png",
+             "streamlit/Final images/2_copy.png",
+             "streamlit/Final images/3_copy.png",
+             "streamlit/Final images/4_copy.png"]:
 
+    with open(file, "rb") as image:
+        encoded = base64.b64encode(image.read()).decode()
+        images.append(f"data:image/jpeg;base64,{encoded}")
 clicked = clickable_images(
-    [
-        "https://images.unsplash.com/photo-1565130838609-c3a86655db61?w=700",
-        "https://images.unsplash.com/photo-1565372195458-9de0b320ef04?w=700",
-        "https://images.unsplash.com/photo-1582550945154-66ea8fff25e1?w=700",
-        "https://images.unsplash.com/photo-1591797442444-039f23ddcc14?w=700",
-        "https://images.unsplash.com/photo-1518727818782-ed5341dbd476?w=700",
-    ],
-    titles=[f"Image #{str(i)}" for i in range(5)],
-    div_style={"display": "flex", "justify-content": "center", "flex-wrap": "wrap"},
-    img_style={"margin": "5px", "height": "200px"},
+    images,
+    titles=[f"Image #{str(i)}" for i in range(4)],
+    div_style={"position": "relative", "display": "flex", "justify-content": "center", "flex-wrap": "wrap"},
+    img_style={"margin": "20px", "height": "200px"},
 )
+if clicked == 0:
+    switch_page("About")
+if clicked == 1:
+    switch_page("Dashboard")
+if clicked == 2:
+     switch_page("Wordcloud")
+if clicked == 3:
+     switch_page("Top 1000")
+
 
 st.markdown(f"Image #{clicked} clicked" if clicked > -1 else "No image clicked")
-
-# Metric
-
-import streamlit as st
-
-st.metric(label="Gas price", value=4, delta=-0.5,
-    delta_color="inverse")
-
-st.metric(label="Active developers", value=123, delta=123,
-    delta_color="off")
