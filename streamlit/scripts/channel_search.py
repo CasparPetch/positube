@@ -1,5 +1,5 @@
 from youtubesearchpython import *
-from single_video import single_video_process
+from scripts.single_video import single_video_process
 import pandas as pd
 
 
@@ -34,4 +34,6 @@ def grab_channel(channel_name):
         info, comment = single_video_process(video)
         infos.append(info)
         comments.append(comment)
-    return pd.concat(comments)
+    return pd.concat(comments), pd.concat(infos)
+
+# grab_channel("PewDiePie")
