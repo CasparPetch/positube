@@ -1,7 +1,6 @@
 # Fetching data from a single video
 
 ### Importing Packages
-
 import pandas as pd
 import numpy as np
 import requests
@@ -27,7 +26,7 @@ def single_video_process(video_id):
     API_KEY = os.environ.get('API_KEY')
 
     ### Cleaning Dataset
-
+    ic.disable()
     def clean_and_filter(df):
         def remove_newline(text):
             text = text.replace('\n', ' ')
@@ -80,7 +79,6 @@ def single_video_process(video_id):
         # print(clean_comments.apply(remove_non_english_symbols)[0])
 
         return df[df["english"] == True]
-
     ### Genre Dictionary
 
     genre_dict = {
@@ -254,9 +252,9 @@ def single_video_process(video_id):
         details = pd.DataFrame(fetch_details(video_id, api_key))
         comments_relevance = pd.DataFrame(fetch_comments_relevance(video_id, api_key))
         stats = pd.DataFrame(fetch_stats(video_id, api_key))
-        # print(details)
-        # print(stats)
-        # print(comments_relevance)
+        ic(details)
+        ic(stats)
+        ic(comments_relevance)
         channel = pd.DataFrame([fetch_channel(details['channel_id'][0], api_key)])
         info_all = pd.concat([stats,details],axis=1)
         comments_relevance["video_id"] = video_id
