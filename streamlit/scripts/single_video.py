@@ -76,7 +76,8 @@ def single_video_process(video_id):
             return cleaned_text
 
         ic("Removing non english symbols")
-        df['comment_clean'] = clean_comments.apply(remove_non_english_symbols)
+        df['comment_clean'] = clean_comments.apply(remove_non_english_symbols)[0]
+        # print(clean_comments.apply(remove_non_english_symbols)[0])
 
         return df[df["english"] == True]
 
@@ -131,7 +132,7 @@ def single_video_process(video_id):
             if nextPageToken:
                 url = f"https://www.googleapis.com/youtube/v3/commentThreads?part=snippet&videoId={video_id}&key={api_key}&maxResults=100&order=relevance"
                 url += f"&pageToken={nextPageToken}"
-
+            # print(url)
             response = requests.get(url)
             token_count += 1
             try:
@@ -253,7 +254,9 @@ def single_video_process(video_id):
         details = pd.DataFrame(fetch_details(video_id, api_key))
         comments_relevance = pd.DataFrame(fetch_comments_relevance(video_id, api_key))
         stats = pd.DataFrame(fetch_stats(video_id, api_key))
-        # breakpoint()
+        # print(details)
+        # print(stats)
+        # print(comments_relevance)
         channel = pd.DataFrame([fetch_channel(details['channel_id'][0], api_key)])
         info_all = pd.concat([stats,details],axis=1)
         comments_relevance["video_id"] = video_id

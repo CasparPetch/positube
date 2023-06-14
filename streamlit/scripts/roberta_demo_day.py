@@ -4,7 +4,7 @@ import requests
 import os
 import tensorflow as tf
 from transformers import AutoTokenizer, TFAutoModelForSequenceClassification
-import channel_search as cs
+# import scripts.channel_search as cs
 
 def roberta(BIGdf):
 
@@ -15,7 +15,7 @@ def roberta(BIGdf):
 
     API_KEY = os.environ.get('API_KEY')
 
-    likes = np.nan
+    likes = []
 
     def making_weights(num):
         '''This function makes weights for each comment based on its like count (num)'''
@@ -83,16 +83,30 @@ def roberta(BIGdf):
 
 
         # Create a new DataFrame with the sentiment analysis results
-        results_df = pd.DataFrame({
-            'Comment': df['comment'],
-            'Sentiment': sentiment_list,
-            'Negative (%)': negative_list,
-            'Neutral (%)': neutral_list,
-            'Positive (%)': positive_list,
-            'Scaler_value': scalar_value_list,
-            'weighted_SV': weighted_SV,
-            'weight': weight
-        })
+        if "video_id" in list(df.columns) and "channel_id" in list(df.columns):
+            results_df = pd.DataFrame({
+                'Comment': df['comment'],
+                'Sentiment': sentiment_list,
+                'Negative (%)': negative_list,
+                'Neutral (%)': neutral_list,
+                'Positive (%)': positive_list,
+                'Scaler_value': scalar_value_list,
+                'weighted_SV': weighted_SV,
+                'weight': weight,
+                'video_id': df["video_id"],
+                'channel_id': df["channel_id"]
+            })
+        else:
+            results_df = pd.DataFrame({
+                'Comment': df['comment'],
+                'Sentiment': sentiment_list,
+                'Negative (%)': negative_list,
+                'Neutral (%)': neutral_list,
+                'Positive (%)': positive_list,
+                'Scaler_value': scalar_value_list,
+                'weighted_SV': weighted_SV,
+                'weight': weight
+            })
 
         # Return the new DataFrame
         return results_df
@@ -103,6 +117,8 @@ def roberta(BIGdf):
         results = sentiment_score_comment(df)
         results['video_id'] = df['video_id']
         results_list.append(results)
+        pd.concat(results_list).to_csv("results.csv")
+
 
     comment_score_df = pd.concat(results_list)
 
@@ -118,4 +134,4 @@ def roberta(BIGdf):
 
     results = sentiment_score_comment(df)
 
-    print(results)
+    return results, IDs_df

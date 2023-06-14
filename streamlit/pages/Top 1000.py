@@ -108,8 +108,13 @@ df = pd.read_csv(os.path.join(positube_path, 'raw_data', 'final_channel_data.csv
 channel_id = st.text_input("Enter Channel ID")
 print(f"Channel ID is {channel_id}")
 if channel_id is not "":
+    print("Grabbing channel...")
     comments, infos = grab_channel(channel_id)
+
+    print("Processing comments...")
+    print("comments")
     results = roberta(comments)
 
-    filter_dataframe(comments)
-    st.write(comments)
+    print("Done")
+    filter_dataframe(results)
+    st.write(results)
