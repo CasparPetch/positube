@@ -1,14 +1,9 @@
 import streamlit as st
+from utils import add_logo
 
-import streamlit as st
 
-# Set page config
-st.set_page_config(
-    page_title="PosiTube",
-    page_icon=":movie_camera:",
-    layout="wide",
-    initial_sidebar_state="expanded",
-)
+add_logo()
+
 
 # Custom CSS for YouTube-inspired theme
 st.markdown(
