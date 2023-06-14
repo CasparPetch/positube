@@ -164,12 +164,17 @@ elif channel_id == "MrBeast":
         st.markdown(f'### You are {-1*(np.round(comments["Scaler_value"].mean() - top_1000["Scaler_value"].mean(),1)*100)}% less positive than average!')
 
 
-    st.markdown("### The most positive channel is name at x%")
-    st.markdown("### But less positive than name at x%!")
-    st.markdown("### You are more positive than name at x%")
-    st.markdown("### And the least positive channel is name at x%")
+    ratings_df = pd.concat([pd.DataFrame({"channel_id":[channel_id], "positivity":[comments["Scaler_value"].mean()]}),top_1000_stats[["channel_id", "positivity"]]]).sort_values("positivity",ascending=False).reset_index(drop=True)
+    ratings_df["positivity"] = ratings_df["positivity"]*100
+
+    place = ratings_df[ratings_df["channel_id"] == channel_id].index[0]
+    # st.write(place)
+    st.markdown(f"### The most positive channel is {ratings_df.iloc[0]['channel_id']} at {ratings_df.iloc[0]['positivity']}%")
+    st.markdown(f"### You are slightly less posivity than name at x%")
+    st.markdown(f"### But a bit more positive than name at x%!")
+    st.markdown(f"### And the least positive channel is name at x%")
     st.markdown("")
-    st.write(top_1000_stats[["positivity", "channel_id"]])
+    st.dataframe(ratings_df)
     st.dataframe(pd.merge(left=top_1000_stats,right=sub_stats.drop("Youtube Channel",axis=1),how="left",on="channel_id"))
 
     st.dataframe(comments)
