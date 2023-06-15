@@ -148,12 +148,12 @@ video_stats
 
 fig = px.line(video_stats, x="date", y="views", title='Views over last 10 videos', text='title')
 fig.update_traces(textposition="bottom right")
-fig.show()
+st.plotly_chart(fig, use_container_width=True)
 
 
 fig = px.line(video_stats, x="date", y="positivity_score", title='Positivity score over last 10 videos', text='title')
 fig.update_traces(textposition="bottom right")
-fig.show()
+st.plotly_chart(fig, use_container_width=True)
 
 def df_cutter(df):
     IDs_list = df.value_counts('video_id').keys()
@@ -175,7 +175,7 @@ IDs_df
 
 fig = px.line(video_stats, x="date", y="positivity_score", title='Positivity score over last 10 videos', text='title')
 fig.update_traces(textposition="bottom right")
-fig.show()
+st.plotly_chart(fig, use_container_width=True)
 
 
 
@@ -184,7 +184,7 @@ video_stats
 
 fig = px.line(video_stats, x="date", y="controversy", title='Controversy over last 10 videos', text='title')
 fig.update_traces(textposition="bottom right")
-fig.show()
+st.plotly_chart(fig, use_container_width=True)
 
 comments_score = pd.read_csv("https://raw.githubusercontent.com/CasparPetch/positube/master/streamlit/pages/comment_score.csv",index_col=0)
 
@@ -242,4 +242,4 @@ def linear_model(df):
 dislikes_pred = linear_model(video_stats[["positivity_score","views","likes","comments","genre"]])
 video_stats["pred_dislikes"] = dislikes_pred
 fig = px.bar(video_stats, x='title', y='pred_dislikes', title='Predicted dislikes on recent videos')
-fig.show()
+st.plotly_chart(fig, use_container_width=True)
