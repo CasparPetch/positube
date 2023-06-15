@@ -8,7 +8,7 @@ notebook
 nltk
 transformers
 streamlit==1.11.1
-altair<5
+altair==4.2.2
 icecream
 youtube-search-python
 
@@ -42,3 +42,4 @@ jupyterlab_server==2.16.1
 streamlit_extras
 st_clickable_images
 wordcloud
+plotly
