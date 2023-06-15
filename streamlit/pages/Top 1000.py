@@ -10,8 +10,8 @@ from pandas.api.types import (
     is_numeric_dtype,
     is_object_dtype,
 )
-from scripts.channel_search import grab_channel
-from scripts.roberta_demo_day import roberta
+#from scripts.channel_search import grab_channel
+#from scripts.roberta_demo_day import roberta
 from utils import add_logo
 
 # comment
@@ -209,19 +209,19 @@ elif channel_id == "MrBeast":
     st.dataframe(comments)
 
     st.dataframe(pd.merge(left=infos, right=IDs, how="outer", on="video_id"))
-else:
-    print("Grabbing channel...")
-    comments, infos = grab_channel(channel_id)
+# else:
+#     print("Grabbing channel...")
+#     comments, infos = grab_channel(channel_id)
 
-    print("Processing comments...")
-    print("comments")
-    comments, IDs = roberta(comments)
-    print("Done")
-    col1, col2, col3 = st.columns(3)
-    with col1:
-        st.metric(label="Average Negative", value=f'{np.round(comments["Negative (%)"].mean(),2)}%', delta=np.round(comments["Negative (%)"].mean() - top_1000["Negative (%)"].mean(),2), delta_color="inverse")
-    with col2:
-        st.metric(label="Average Neutral", value=f'{np.round(comments["Neutral (%)"].mean(),2)}%', delta=np.round(comments["Neutral (%)"].mean() - top_1000["Neutral (%)"].mean(),2), delta_color="off")
-    with col3:
-        st.metric(label="Average Positive", value=f'{np.round(comments["Positive (%)"].mean(),2)}%', delta=np.round(comments["Positive (%)"].mean() - top_1000["Positive (%)"].mean(),2), delta_color="normal")
-    st.dataframe(comments)
+#     print("Processing comments...")
+#     print("comments")
+#     comments, IDs = roberta(comments)
+#     print("Done")
+#     col1, col2, col3 = st.columns(3)
+#     with col1:
+#         st.metric(label="Average Negative", value=f'{np.round(comments["Negative (%)"].mean(),2)}%', delta=np.round(comments["Negative (%)"].mean() - top_1000["Negative (%)"].mean(),2), delta_color="inverse")
+#     with col2:
+#         st.metric(label="Average Neutral", value=f'{np.round(comments["Neutral (%)"].mean(),2)}%', delta=np.round(comments["Neutral (%)"].mean() - top_1000["Neutral (%)"].mean(),2), delta_color="off")
+#     with col3:
+#         st.metric(label="Average Positive", value=f'{np.round(comments["Positive (%)"].mean(),2)}%', delta=np.round(comments["Positive (%)"].mean() - top_1000["Positive (%)"].mean(),2), delta_color="normal")
+#     st.dataframe(comments)
