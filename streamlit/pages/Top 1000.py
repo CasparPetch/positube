@@ -108,14 +108,12 @@ def get_useful_stats(df):
     return new_df.reset_index(drop=True)
 
 
-
 positube_path = os.path.dirname(os.path.dirname(os.path.dirname(__file__)))
 
 
 add_logo()
 
-
-
+st.session_state['channel_id'] = None
 
 st.markdown("# Top 1000 popular channels")
 st.sidebar.header("Top 1000")
@@ -125,90 +123,90 @@ st.write(
 
 df = pd.read_csv(os.path.join(positube_path, 'raw_data', 'final_channel_data.csv'))
 
-
-
 filepath = os.path.join(os.path.abspath("."),"streamlit","data","top_1000.csv")
 top_1000 = pd.read_csv(filepath)
+top_1000_stats = get_useful_stats(top_1000)
 
-channel_id = st.text_input("Enter Channel ID")
-print(f"Channel ID is {channel_id}")
-if channel_id == "":
-    top_1000_stats = get_useful_stats(top_1000)
-    # filter_dataframe(top_1000_stats)
-    sub_stats = pd.read_csv(os.path.join(os.path.abspath("."),"streamlit","data","topSubscribed.csv"))
-    sub_stats["channel_id"] = sub_stats["Youtube Channel"]
+# filter_dataframe(top_1000_stats)
+sub_stats = pd.read_csv(os.path.join(os.path.abspath("."),"streamlit","data","topSubscribed.csv"))
+sub_stats["channel_id"] = sub_stats["Youtube Channel"]
 
+if st.session_state['channel_id'] != 'MrBeast':
     col1, col2, col3 = st.columns(3)
     with col1:
         st.metric(label="Average Negative", value=f'{np.round(top_1000["Negative (%)"].mean(),2)}%',)
+
     with col2:
         st.metric(label="Average Neutral", value=f'{np.round(top_1000["Neutral (%)"].mean(),2)}%',)
+        # print(f"Channel ID is {channel_id}")
+
     with col3:
         st.metric(label="Average Positive", value=f'{np.round(top_1000["Positive (%)"].mean(),2)}%',)
-    st.metric(label="Overall Positivity", value=f'{np.round(top_1000["Scaler_value"].mean(),2)*100}%')
-    st.dataframe(pd.merge(left=top_1000_stats,right=sub_stats.drop("Youtube Channel",axis=1),how="left",on="channel_id"))
+    # st.metric(label="Overall Positivity", value=f'{np.round(top_1000["Scaler_value"].mean(),2)*100}%')
 
+channel_id =  st.text_input("Enter Channel ID")
+st.session_state['channel_id'] = channel_id
 
-
-
-
-elif channel_id == "MrBeast":
+if st.session_state['channel_id'] == "MrBeast":
     comments = pd.read_csv(os.path.join(positube_path, 'streamlit', 'data', 'mrbeast_comments.csv'))
     infos = pd.read_csv(os.path.join(positube_path, 'streamlit', 'data', 'mrbeast_infos.csv'))
     IDs = pd.read_csv(os.path.join(positube_path, 'streamlit', 'data', 'mrbeast_videos.csv'))
-    col1, col2, col3 = st.columns(3)
-    with col1:
-        st.metric(label="Average Negative", value=f'{np.round(comments["Negative (%)"].mean(),2)}%', delta=f'{np.round(comments["Negative (%)"].mean() - top_1000["Negative (%)"].mean(),1)}%', delta_color="inverse")
-    with col2:
-        st.metric(label="Average Neutral", value=f'{np.round(comments["Neutral (%)"].mean(),2)}%', delta=f'{np.round(comments["Neutral (%)"].mean() - top_1000["Neutral (%)"].mean(),1)}%', delta_color="off")
-    with col3:
-        st.metric(label="Average Positive", value=f'{np.round(comments["Positive (%)"].mean(),2)}%', delta=f'{np.round(comments["Positive (%)"].mean() - top_1000["Positive (%)"].mean(),1)}%', delta_color="normal")
-    # st.metric(label="Overall Positivity", value=f'{np.round(comments["Scaler_value"].mean(),2)*100}%', delta=f'{np.round(comments["Scaler_value"].mean() - top_1000["Scaler_value"].mean(),1)*100}%', delta_color="normal")
-
     top_1000_stats = get_useful_stats(top_1000)
     sub_stats = pd.read_csv(os.path.join(os.path.abspath("."),"streamlit","data","topSubscribed.csv"))
     sub_stats["channel_id"] = sub_stats["Youtube Channel"]
 
-
-
     ratings_df = pd.concat([pd.DataFrame({"channel_id": [channel_id], "positivity": [comments["Scaler_value"].mean()]}), top_1000_stats[["channel_id", "positivity"]]]).sort_values("positivity", ascending=False).reset_index(drop=True)
-    ratings_df["positivity"] = ratings_df["positivity"] * 100
-
+    # ratings_df.drop_duplicates(inplace=True)
+    ratings_df["positivity"] = np.round(ratings_df["positivity"] * 100, 2)
     place = ratings_df[ratings_df["channel_id"] == channel_id].index[0]
-    col4, col5, col6 = st.columns(3)
-    with col4:
-        st.metric(label="Positivity score",
-        value=f'{np.round(ratings_df.iloc[place]["positivity"], 2)}%',
-        delta=f'{np.round(comments["Scaler_value"].mean() - top_1000["Scaler_value"].mean(), 1) * 100}',
-        delta_color="normal")
+    score = np.round(comments["Scaler_value"].mean() - top_1000["Scaler_value"].mean(),1)*100
+
+    col1, col2, col3 = st.columns(3)
+    with col1:
+        # st.metric(label="Average Negative", value=f'{np.round(comments["Negative (%)"].mean(),2)}%', delta=f'{np.round(comments["Negative (%)"].mean() - top_1000["Negative (%)"].mean(),1)}%', delta_color="inverse")
+        st.dataframe(ratings_df)
+    with col2:
+        st.text(' ')
+        st.metric(label=f"{ratings_df.iloc[place-1]['channel_id']}", value=f"{np.round(ratings_df.iloc[place-1]['positivity'])}%")
+        st.text(' ')
+        st.markdown('***')
+        st.metric(label="Overall Positivity of MrBeast", value=f'{np.round(ratings_df.iloc[place]["positivity"], 2)}%', delta=f'{score}%', delta_color="normal")
+        st.markdown('***')
+        st.metric(label=f"{ratings_df.iloc[place+1]['channel_id']}", value=f"{np.round(ratings_df.iloc[place+1]['positivity'])}%")
+    with col3:
+        st.markdown(f"###### ❤️ Most Positive Channel ❤️ ")
+        st.metric(label=f"{ratings_df.iloc[0]['channel_id']}", value=f"{np.round(ratings_df.iloc[0]['positivity'],2)}%")
+        st.markdown('***')
+        st.metric(label="MrBeast's Positivity Ranking", value=f'{place}')
+        st.text(' ')
+        st.markdown('***')
+        st.markdown(f"###### 😡 Most Negative Channel 😡")
+        st.metric(label=f"{ratings_df.iloc[-1]['channel_id']}", value=f"{np.round(ratings_df.iloc[-1]['positivity'],2)}%")
+        # st.metric(label="Average Neutral", value=f'{np.round(comments["Neutral (%)"].mean(),2)}%', delta=f'{np.round(comments["Neutral (%)"].mean() - top_1000["Neutral (%)"].mean(),1)}%', delta_color="off")
+
+
+    # st.write(place)
+        # st.metric(label="Average Positive", value=f'{np.round(comments["Positive (%)"].mean(),2)}%', delta=f'{np.round(comments["Positive (%)"].mean() - top_1000["Positive (%)"].mean(),1)}%', delta_color="normal")
+
+    # col4, col5, col6 = st.columns(3)
+    # with col4:
+    #     st.metric(label="Positivity score",
+    #     value=f'{np.round(ratings_df.iloc[place]["positivity"], 2)}%',
+    #     delta=f'{np.round(comments["Scaler_value"].mean() - top_1000["Scaler_value"].mean(), 1) * 100}',
+    #     delta_color="normal")
 
 
     st.balloons()
     # st.markdown(f"# Positivity score: {np.round(comments['Scaler_value'].mean(),2)*100}%")
-    if np.round(comments["Scaler_value"].mean() - top_1000["Scaler_value"].mean(),1)*100 > 0:
-        col4, col5 = st.columns(2)
-        with col5:
-            st.metric(
-                label="Less positive",
-                value=f'### You are {np.round((comments["Scaler_value"].mean() - top_1000["Scaler_value"].mean()),1)*100}% more positive than average!',
-                delta=np.round(comments["Scaler_value"].mean() - top_1000["Scaler_value"].mean(),1)*100
-            )
-    else:
-        col4, col5, col6 = st.columns(3)
-        with col5:
-            st.markdown(f'### You are {-1*(np.round(comments["Scaler_value"].mean() - top_1000["Scaler_value"].mean(),1)*100)}% less positive than average!')
-    # st.write(place)
-    st.markdown(f"### The most positive channel is {ratings_df.iloc[0]['channel_id']} at {np.round(ratings_df.iloc[0]['positivity'],2)}%")
-    st.markdown(f"### You are slightly less positive than {ratings_df.iloc[place-1]['channel_id']} at {np.round(ratings_df.iloc[place-1]['positivity'],2)}%")
-    st.markdown(f"### But slightly more positive than {ratings_df.iloc[place+1]['channel_id']} at {np.round(ratings_df.iloc[place+1]['positivity'],2)}%!")
-    st.markdown(f"### And the most negative channel is {ratings_df.iloc[-1]['channel_id']} at {np.round(ratings_df.iloc[-1]['positivity'],2)}%")
-    st.markdown("")
-    st.dataframe(ratings_df)
-    st.dataframe(pd.merge(left=top_1000_stats,right=sub_stats.drop("Youtube Channel",axis=1),how="left",on="channel_id"))
 
-    st.dataframe(comments)
 
-    st.dataframe(pd.merge(left=infos, right=IDs, how="outer", on="video_id"))
+    # st.markdown("")
+    # st.dataframe(ratings_df)
+    # st.dataframe(pd.merge(left=top_1000_stats,right=sub_stats.drop("Youtube Channel",axis=1),how="left",on="channel_id"))
+
+    # st.dataframe(comments)
+
+    # st.dataframe(pd.merge(left=infos, right=IDs, how="outer", on="video_id"))
 # else:
 #     print("Grabbing channel...")
 #     comments, infos = grab_channel(channel_id)
@@ -225,3 +223,13 @@ elif channel_id == "MrBeast":
 #     with col3:
 #         st.metric(label="Average Positive", value=f'{np.round(comments["Positive (%)"].mean(),2)}%', delta=np.round(comments["Positive (%)"].mean() - top_1000["Positive (%)"].mean(),2), delta_color="normal")
 #     st.dataframe(comments)
+
+    # ranked_data = pd.merge(left=top_1000_stats,right=sub_stats.drop("Youtube Channel",axis=1),how="left",on="channel_id")
+    # hide_dataframe_row_index = """
+    #         <style>
+    #         .row_heading.level0 {display:none}
+    #         .blank {display:none}
+    #         </style>
+    #         """
+    # st.markdown(hide_dataframe_row_index, unsafe_allow_html=True)
+    # st.dataframe(ranked_data)
