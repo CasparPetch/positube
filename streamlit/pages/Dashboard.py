@@ -186,7 +186,7 @@ fig = px.line(video_stats, x="date", y="controversy", title='Controversy over la
 fig.update_traces(textposition="bottom right")
 fig.show()
 
-comments_score = pd.read_csv("../streamlit/pages/comment_score.csv",index_col=0)
+comments_score = pd.read_csv("https://raw.githubusercontent.com/CasparPetch/positube/master/streamlit/pages/comment_score.csv",index_col=0)
 
 
 def linear_model(df):
