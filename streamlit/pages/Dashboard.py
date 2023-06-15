@@ -194,7 +194,7 @@ def linear_model(df):
     from sklearn.linear_model import LinearRegression
     import numpy as np
 
-    data = pd.read_csv('streamlit/data/data_for_regression.csv', index_col=0)
+    data = pd.read_csv('https://raw.githubusercontent.com/CasparPetch/positube/master/streamlit/data/data_for_regression.csv', index_col=0)
 
     data["dislike_ratio"] = data["dislikes_2021"] / (data["likes_2021"] + data["dislikes_2021"])
     data = data[['dislike_ratio', 'positivity_score', 'views_2023', 'likes_2023', 'comments_2023', 'genre']]
