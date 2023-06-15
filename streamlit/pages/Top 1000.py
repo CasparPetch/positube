@@ -189,9 +189,10 @@ elif channel_id == "MrBeast":
         col4, col5 = st.columns(2)
         with col5:
             st.metric(
-            label="Less positive",
-            value=f'### You are {np.round(comments["Scaler_value"].mean() - top_1000["Scaler_value"].mean(),1)*100}% more positive than average!'
-            delta=np.round(comments["Scaler_value"].mean() - top_1000["Scaler_value"].mean(),1)*100)
+                label="Less positive",
+                value=f'### You are {np.round((comments["Scaler_value"].mean() - top_1000["Scaler_value"].mean()),1)*100}% more positive than average!',
+                delta=np.round(comments["Scaler_value"].mean() - top_1000["Scaler_value"].mean(),1)*100
+            )
     else:
         col4, col5, col6 = st.columns(3)
         with col5:
