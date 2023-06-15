@@ -58,11 +58,11 @@ def cloud(mask, max_word, max_font, random_, channel_id):
     'put', 'seem', 'asked', 'made', 'half', 'much',
     'certainly', 'might', 'came'])
 
-    prepared = ['BenShapiro', 'PewDiePie']
-    if channel_id in prepared:
-        positive_str, negative_str = csv_to_doc(f'streamlit/data/{channel_id}_results.csv')
-    else:
-        positive_str, negative_str = csv_to_doc('comment_score.csv')
+    # prepared = ['BenShapiro', 'PewDiePie']
+    # if channel_id in prepared:
+    positive_str, negative_str = csv_to_doc(f'streamlit/data/BenShapiro_results.csv')
+    # else:
+    #     positive_str, negative_str = csv_to_doc('comment_score.csv')
 
     wc = WordCloud(mask=mask, height=600,width=600, background_color="white", max_words=max_word,
     stopwords=stopwords, max_font_size=max_font, random_state=random_)
