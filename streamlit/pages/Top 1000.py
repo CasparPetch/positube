@@ -13,9 +13,6 @@ from scripts.channel_search import grab_channel
 from scripts.roberta_demo_day import roberta
 from utils import add_logo
 
-
-add_logo()
-
 def filter_dataframe(df: pd.DataFrame) -> pd.DataFrame:
     """
     Adds a UI on top of a dataframe to let viewers filter columns
@@ -112,6 +109,7 @@ def get_useful_stats(df):
 positube_path = os.path.dirname(os.path.dirname(os.path.dirname(__file__)))
 
 st.set_page_config(page_title="DataFrame Demo", page_icon="📊")
+add_logo()
 
 st.markdown("# Top 1000 popular channels")
 st.sidebar.header("Top 1000")
@@ -151,7 +149,6 @@ elif channel_id == "MrBeast":
     comments = pd.read_csv(os.path.join(positube_path, 'streamlit', 'data', 'mrbeast_comments.csv'))
     infos = pd.read_csv(os.path.join(positube_path, 'streamlit', 'data', 'mrbeast_infos.csv'))
     IDs = pd.read_csv(os.path.join(positube_path, 'streamlit', 'data', 'mrbeast_videos.csv'))
-    st.balloons()
     st.metric(label="Average Negative", value=f'{np.round(comments["Negative (%)"].mean(),2)}%', delta=f'{np.round(comments["Negative (%)"].mean() - top_1000["Negative (%)"].mean(),1)}%', delta_color="inverse")
     st.metric(label="Average Neutral", value=f'{np.round(comments["Neutral (%)"].mean(),2)}%', delta=f'{np.round(comments["Neutral (%)"].mean() - top_1000["Neutral (%)"].mean(),1)}%', delta_color="off")
     st.metric(label="Average Positive", value=f'{np.round(comments["Positive (%)"].mean(),2)}%', delta=f'{np.round(comments["Positive (%)"].mean() - top_1000["Positive (%)"].mean(),1)}%', delta_color="normal")
@@ -160,22 +157,25 @@ elif channel_id == "MrBeast":
     top_1000_stats = get_useful_stats(top_1000)
     sub_stats = pd.read_csv(os.path.join(os.path.abspath("."),"streamlit","data","topSubscribed.csv"))
     sub_stats["channel_id"] = sub_stats["Youtube Channel"]
-    st.markdown(f"# Positivity score: {np.round(comments['Scaler_value'].mean(),2)*100}%")
-    if np.round(comments["Scaler_value"].mean() - top_1000["Scaler_value"].mean(),1)*100 > 0:
-        st.markdown(f'### You are {np.round(comments["Scaler_value"].mean() - top_1000["Scaler_value"].mean(),1)*100}% more positive than average!')
-    else:
-        st.markdown(f'### You are {-1*(np.round(comments["Scaler_value"].mean() - top_1000["Scaler_value"].mean(),1)*100)}% less positive than average!')
+
 
 
     ratings_df = pd.concat([pd.DataFrame({"channel_id":[channel_id], "positivity":[comments["Scaler_value"].mean()]}),top_1000_stats[["channel_id", "positivity"]]]).sort_values("positivity",ascending=False).reset_index(drop=True)
     ratings_df["positivity"] = ratings_df["positivity"]*100
 
     place = ratings_df[ratings_df["channel_id"] == channel_id].index[0]
+    st.markdown(f"# Positivity score: {np.round(ratings_df.iloc[place]['positivity'],2)}%")
+    st.balloons()
+    # st.markdown(f"# Positivity score: {np.round(comments['Scaler_value'].mean(),2)*100}%")
+    if np.round(comments["Scaler_value"].mean() - top_1000["Scaler_value"].mean(),1)*100 > 0:
+        st.markdown(f'### You are {np.round(comments["Scaler_value"].mean() - top_1000["Scaler_value"].mean(),1)*100}% more positive than average!')
+    else:
+        st.markdown(f'### You are {-1*(np.round(comments["Scaler_value"].mean() - top_1000["Scaler_value"].mean(),1)*100)}% less positive than average!')
     # st.write(place)
-    st.markdown(f"### The most positive channel is {ratings_df.iloc[0]['channel_id']} at {ratings_df.iloc[0]['positivity']}%")
-    st.markdown(f"### You are slightly less posivity than name at x%")
-    st.markdown(f"### But a bit more positive than name at x%!")
-    st.markdown(f"### And the least positive channel is name at x%")
+    st.markdown(f"### The most positive channel is {ratings_df.iloc[0]['channel_id']} at {np.round(ratings_df.iloc[0]['positivity'],2)}%")
+    st.markdown(f"### You are slightly less positive than {ratings_df.iloc[place-1]['channel_id']} at {np.round(ratings_df.iloc[place-1]['positivity'],2)}%")
+    st.markdown(f"### But slightly more positive than {ratings_df.iloc[place+1]['channel_id']} at {np.round(ratings_df.iloc[place+1]['positivity'],2)}%!")
+    st.markdown(f"### And the most negative channel is {ratings_df.iloc[-1]['channel_id']} at {np.round(ratings_df.iloc[-1]['positivity'],2)}%")
     st.markdown("")
     st.dataframe(ratings_df)
     st.dataframe(pd.merge(left=top_1000_stats,right=sub_stats.drop("Youtube Channel",axis=1),how="left",on="channel_id"))

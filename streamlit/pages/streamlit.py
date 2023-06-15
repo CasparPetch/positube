@@ -9,25 +9,11 @@ import streamlit as st
 from wordcloud import WordCloud, STOPWORDS, ImageColorGenerator
 import os
 import random
-from single_video_scripts.single_video import single_video_process
-from single_video_scripts.channel_search import grab_channel
-from utils import add_logo
 
-
-
-st.set_page_config(page_title="Word Cloud", page_icon="📊")
-add_logo()
-
-st.markdown("# Word Cloud")
-st.sidebar.header("Word Cloud")
-st.write(
-    """This demo shows how to use `st.write` to visualize Pandas DataFrames.
-(Data courtesy of the [UN Data Explorer](http://data.un.org/Explorer.aspx).)"""
-)
 
 def csv_to_doc(csv_file):
     current_directory = os.getcwd()
-    path = os.path.join(current_directory, 'streamlit', 'pages', csv_file)
+    path = os.path.join(current_directory, 'streamlit', csv_file)
     df = pd.read_csv(path, index_col=0)
     pos_str = ""
     neg_str = ""
@@ -80,18 +66,13 @@ def main():
             st.write("### Original image")
             st.write("### Word cloud")
 
-    # Defines the local location of the image NEEDS TO BE CHANGED TO URL ON PUBLIC GITHUB REPO
+
     image_filename = "yt_logo.png"
     current_directory = os.getcwd()
-    mask_image_path = os.path.join(current_directory, 'streamlit', image_filename)
+    mask_image = os.path.join(current_directory, 'streamlit', image_filename)
+    st.image(mask_image, use_column_width=True)
 
-    # Displays the image on streamlit
-    st.image(mask_image_path, use_column_width=True)
 
-    # Uses image path to create numpy array of image
-    mask_image = np.array(Image.open(mask_image_path))
-
-    # runs pre-defined cloud function using chosen image and displays on streamlit
     st.write(cloud(mask=mask_image, max_word=max_word, max_font=max_font, random_=random_), use_column_width=True)
 
 if __name__ == "__main__":
