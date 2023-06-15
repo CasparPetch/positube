@@ -60,7 +60,9 @@ if channel_name not in st.session_state.keys():
         # Line breaks
         st.text("")
 
+
         if 'channel_stats' in st.session_state.keys():
+
 
             # Basic Statistics
             view_count = st.session_state['channel_stats']['Total_Views'].values[0]
@@ -114,8 +116,8 @@ if channel_name not in st.session_state.keys():
                 st.session_state['comments_score'] = pd.read_csv("https://raw.githubusercontent.com/CasparPetch/positube/master/streamlit/pages/comment_score.csv",index_col=0)
 
 
-
                 video_stats = pd.merge(left=st.session_state['pos_score_df'],right=st.session_state['channel_info'],how="inner",on="video_id").sort_values("date")
+
 
                 dislikes_pred = linear_model(video_stats[["positivity_score","views","likes","comments","genre"]])
                 video_stats["pred_dislikes"] = dislikes_pred
@@ -150,3 +152,4 @@ if channel_name not in st.session_state.keys():
                 fig = px.line(video_stats, x="date", y="controversy", title='Controversy over last 10 videos', text='title')
                 fig.update_traces(textposition="bottom right")
                 st.plotly_chart(fig, use_container_width=True)
+
