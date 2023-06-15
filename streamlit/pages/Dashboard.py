@@ -139,52 +139,7 @@ results = pd.read_csv("data/BenShapiro_results.csv",index_col=0)
 channel_df = pd.read_csv("data/BenShapiro_channel_df.csv",index_col=0)
 channel_stats = pd.read_csv("data/BenShapiro_channel_stats.csv",index_col=0)
 
-# df.loc[df['pop'] < 2.e6, 'country'] = 'Other countries' # Represent only large countries
-# fig = px.pie(df, values='pop', names='country', title='Population of European continent')
-# fig.show()
-video_stats = pd.merge(left=IDs_df,right=channel_info,how="inner",on="video_id").sort_values("date")
-video_stats
 
-
-fig = px.line(video_stats, x="date", y="views", title='Views over last 10 videos', text='title')
-fig.update_traces(textposition="bottom right")
-fig.show()
-
-
-fig = px.line(video_stats, x="date", y="positivity_score", title='Positivity score over last 10 videos', text='title')
-fig.update_traces(textposition="bottom right")
-fig.show()
-
-def df_cutter(df):
-    IDs_list = df.value_counts('video_id').keys()
-    cut_dfs = []
-    for i, video in enumerate(IDs_list):
-        cut_df = df[df['video_id'] == IDs_list[i]]
-        cut_dfs.append(cut_df)
-    return cut_dfs
-
-
-controversy = []
-cut_dfs = df_cutter(results)
-for df in cut_dfs:
-#     print(df["Negative (%)"].mean())
-    controversy.append(df["Negative (%)"].mean() * df["Positive (%)"].mean())
-IDs_df["controversy"] = controversy
-IDs_df
-
-
-fig = px.line(video_stats, x="date", y="positivity_score", title='Positivity score over last 10 videos', text='title')
-fig.update_traces(textposition="bottom right")
-fig.show()
-
-
-
-video_stats = pd.merge(left=IDs_df,right=channel_info,how="inner",on="video_id").sort_values("date")
-video_stats
-
-fig = px.line(video_stats, x="date", y="controversy", title='Controversy over last 10 videos', text='title')
-fig.update_traces(textposition="bottom right")
-fig.show()
 
 comments_score = pd.read_csv("../streamlit/pages/comment_score.csv",index_col=0)
 
@@ -237,9 +192,49 @@ def linear_model(df):
 
     dislikes_pred = (df["likes"] * y_pred)/(1-y_pred)
     return dislikes_pred
-
+video_stats = pd.merge(left=IDs_df,right=channel_info,how="inner",on="video_id").sort_values("date")
 
 dislikes_pred = linear_model(video_stats[["positivity_score","views","likes","comments","genre"]])
 video_stats["pred_dislikes"] = dislikes_pred
 fig = px.bar(video_stats, x='title', y='pred_dislikes', title='Predicted dislikes on recent videos')
+fig.show()
+
+
+
+fig = px.line(video_stats, x="date", y="views", title='Views over last 10 videos', text='title')
+fig.update_traces(textposition="bottom right")
+fig.show()
+
+
+fig = px.line(video_stats, x="date", y="positivity_score", title='Positivity score over last 10 videos', text='title')
+fig.update_traces(textposition="bottom right")
+fig.show()
+
+def df_cutter(df):
+    IDs_list = df.value_counts('video_id').keys()
+    cut_dfs = []
+    for i, video in enumerate(IDs_list):
+        cut_df = df[df['video_id'] == IDs_list[i]]
+        cut_dfs.append(cut_df)
+    return cut_dfs
+
+
+controversy = []
+cut_dfs = df_cutter(results)
+for df in cut_dfs:
+#     print(df["Negative (%)"].mean())
+    controversy.append(df["Negative (%)"].mean() * df["Positive (%)"].mean())
+IDs_df["controversy"] = controversy
+
+
+fig = px.line(video_stats, x="date", y="positivity_score", title='Positivity score over last 10 videos', text='title')
+fig.update_traces(textposition="bottom right")
+fig.show()
+
+
+
+video_stats = pd.merge(left=IDs_df,right=channel_info,how="inner",on="video_id").sort_values("date")
+
+fig = px.line(video_stats, x="date", y="controversy", title='Controversy over last 10 videos', text='title')
+fig.update_traces(textposition="bottom right")
 fig.show()
