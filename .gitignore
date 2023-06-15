@@ -6,3 +6,4 @@ data/
 .DS_Store
 notebooks/comments/
 *.csv
+*__pycache__*
