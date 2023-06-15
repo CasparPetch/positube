@@ -139,6 +139,7 @@ results = pd.read_csv("https://raw.githubusercontent.com/CasparPetch/positube/ma
 channel_df = pd.read_csv("https://raw.githubusercontent.com/CasparPetch/positube/master/streamlit/data/BenShapiro_channel_df.csv",index_col=0)
 channel_stats = pd.read_csv("https://raw.githubusercontent.com/CasparPetch/positube/master/streamlit/data/BenShapiro_channel_stats.csv",index_col=0)
 
+
 # df.loc[df['pop'] < 2.e6, 'country'] = 'Other countries' # Represent only large countries
 # fig = px.pie(df, values='pop', names='country', title='Population of European continent')
 # fig.show()
@@ -189,6 +190,7 @@ st.plotly_chart(fig, use_container_width=True)
 comments_score = pd.read_csv("https://raw.githubusercontent.com/CasparPetch/positube/master/streamlit/pages/comment_score.csv",index_col=0)
 
 
+
 def linear_model(df):
     import pandas as pd
     from sklearn.linear_model import LinearRegression
@@ -237,9 +239,10 @@ def linear_model(df):
 
     dislikes_pred = (df["likes"] * y_pred)/(1-y_pred)
     return dislikes_pred
-
+video_stats = pd.merge(left=IDs_df,right=channel_info,how="inner",on="video_id").sort_values("date")
 
 dislikes_pred = linear_model(video_stats[["positivity_score","views","likes","comments","genre"]])
 video_stats["pred_dislikes"] = dislikes_pred
 fig = px.bar(video_stats, x='title', y='pred_dislikes', title='Predicted dislikes on recent videos')
+
 st.plotly_chart(fig, use_container_width=True)
