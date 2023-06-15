@@ -7,7 +7,7 @@ seaborn
 notebook
 nltk
 transformers
-streamlit==1.23.0
+streamlit
 altair==4.2.2
 icecream
 youtube-search-python
