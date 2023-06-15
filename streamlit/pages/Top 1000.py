@@ -171,17 +171,31 @@ elif channel_id == "MrBeast":
 
 
 
-    ratings_df = pd.concat([pd.DataFrame({"channel_id":[channel_id], "positivity":[comments["Scaler_value"].mean()]}),top_1000_stats[["channel_id", "positivity"]]]).sort_values("positivity",ascending=False).reset_index(drop=True)
-    ratings_df["positivity"] = ratings_df["positivity"]*100
+    ratings_df = pd.concat([pd.DataFrame({"channel_id": [channel_id], "positivity": [comments["Scaler_value"].mean()]}), top_1000_stats[["channel_id", "positivity"]]]).sort_values("positivity", ascending=False).reset_index(drop=True)
+    ratings_df["positivity"] = ratings_df["positivity"] * 100
 
     place = ratings_df[ratings_df["channel_id"] == channel_id].index[0]
-    st.markdown(f"# Positivity score: {np.round(ratings_df.iloc[place]['positivity'],2)}%")
+    col4, col5, col6 = st.columns(3)
+    with col4:
+        st.metric(label="Positivity score",
+        value=f'{np.round(ratings_df.iloc[place]["positivity"], 2)}%',
+        delta=f'{np.round(comments["Scaler_value"].mean() - top_1000["Scaler_value"].mean(), 1) * 100}',
+        delta_color="normal")
+
+
     st.balloons()
     # st.markdown(f"# Positivity score: {np.round(comments['Scaler_value'].mean(),2)*100}%")
     if np.round(comments["Scaler_value"].mean() - top_1000["Scaler_value"].mean(),1)*100 > 0:
-        st.markdown(f'### You are {np.round(comments["Scaler_value"].mean() - top_1000["Scaler_value"].mean(),1)*100}% more positive than average!')
+        col4, col5 = st.columns(2)
+        with col5:
+            st.metric(
+            label="Less positive",
+            value=f'### You are {np.round(comments["Scaler_value"].mean() - top_1000["Scaler_value"].mean(),1)*100}% more positive than average!'
+            delta=np.round(comments["Scaler_value"].mean() - top_1000["Scaler_value"].mean(),1)*100)
     else:
-        st.markdown(f'### You are {-1*(np.round(comments["Scaler_value"].mean() - top_1000["Scaler_value"].mean(),1)*100)}% less positive than average!')
+        col4, col5, col6 = st.columns(3)
+        with col5:
+            st.markdown(f'### You are {-1*(np.round(comments["Scaler_value"].mean() - top_1000["Scaler_value"].mean(),1)*100)}% less positive than average!')
     # st.write(place)
     st.markdown(f"### The most positive channel is {ratings_df.iloc[0]['channel_id']} at {np.round(ratings_df.iloc[0]['positivity'],2)}%")
     st.markdown(f"### You are slightly less positive than {ratings_df.iloc[place-1]['channel_id']} at {np.round(ratings_df.iloc[place-1]['positivity'],2)}%")
