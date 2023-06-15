@@ -2,6 +2,7 @@ import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
 import streamlit as st
+st.set_page_config(page_title="Channel Dashboard", page_icon="📈")
 import os
 from utils import add_logo
 
@@ -18,7 +19,7 @@ st.session_state['API_KEY'] = os.getenv('API_KEY')
 # for key in st.session_state.keys():
 #     st.session_state[key] = None
 
-st.set_page_config(page_title="Channel Dashboard", page_icon="📈")
+
 
 add_logo()
 
