@@ -5,7 +5,6 @@ import streamlit as st
 import os
 from utils import add_logo
 
-add_logo()
 
 # from PIL import Image
 # from wordcloud import WordCloud, STOPWORDS, ImageColorGenerator
@@ -20,6 +19,9 @@ st.session_state['API_KEY'] = os.getenv('API_KEY')
 #     st.session_state[key] = None
 
 st.set_page_config(page_title="Channel Dashboard", page_icon="📈")
+
+add_logo()
+
 
 st.markdown("# Channel Dashboard")
 st.sidebar.header("Channel Dashboard")
