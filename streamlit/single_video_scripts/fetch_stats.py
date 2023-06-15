@@ -19,7 +19,7 @@ def fetch_stats(video_id, api_key):
             likes = data[0]["statistics"].get("likeCount",0)
             comments = data[0]["statistics"].get("commentCount",0)
             dict_ = {"views":[views], "likes":[likes], "comments":[comments]}
-            ic(dict_)
+            # ic(dict_)
             return dict_
         return {}
     else:
