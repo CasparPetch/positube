@@ -137,7 +137,7 @@ IDs_df = pd.read_csv("https://raw.githubusercontent.com/CasparPetch/positube/mas
 channel_info = pd.read_csv("https://raw.githubusercontent.com/CasparPetch/positube/master/streamlit/data/BenShapiro_channel_info.csv",index_col=0)
 results = pd.read_csv("https://raw.githubusercontent.com/CasparPetch/positube/master/streamlit/data/BenShapiro_results.csv",index_col=0)
 channel_df = pd.read_csv("https://raw.githubusercontent.com/CasparPetch/positube/master/streamlit/data/BenShapiro_channel_df.csv",index_col=0)
-channel_stats = pd.read_csv("https://raw.githubusercontent.com/CasparPetch/positube/master/streamlit/data/BenShapiro_channel_stats.csv.csv",index_col=0)
+channel_stats = pd.read_csv("https://raw.githubusercontent.com/CasparPetch/positube/master/streamlit/data/BenShapiro_channel_stats.ccsv",index_col=0)
 
 
 
