@@ -1,6 +1,10 @@
 import streamlit as st
 import time
 import numpy as np
+from utils import add_logo
+
+
+add_logo()
 
 st.set_page_config(page_title="Mapping Demo", page_icon="🌍")
 

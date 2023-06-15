@@ -3,6 +3,10 @@ import numpy as np
 import matplotlib.pyplot as plt
 import streamlit as st
 import os
+from utils import add_logo
+
+add_logo()
+
 # from PIL import Image
 # from wordcloud import WordCloud, STOPWORDS, ImageColorGenerator
 
