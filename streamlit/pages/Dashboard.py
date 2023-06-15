@@ -115,3 +115,131 @@ if st.button("Tube me"):
             columns=['a', 'b', 'c'])
 
         st.area_chart(chart1_data)
+
+
+
+
+
+
+
+
+
+
+
+
+import plotly.express as px
+import pandas as pd
+import numpy as np
+
+
+
+IDs_df = pd.read_csv("data/BenShapiro_IDs_df.csv",index_col=0)
+channel_info = pd.read_csv("data/BenShapiro_channel_info.csv",index_col=0)
+results = pd.read_csv("data/BenShapiro_results.csv",index_col=0)
+channel_df = pd.read_csv("data/BenShapiro_channel_df.csv",index_col=0)
+channel_stats = pd.read_csv("data/BenShapiro_channel_stats.csv",index_col=0)
+
+# df.loc[df['pop'] < 2.e6, 'country'] = 'Other countries' # Represent only large countries
+# fig = px.pie(df, values='pop', names='country', title='Population of European continent')
+# fig.show()
+video_stats = pd.merge(left=IDs_df,right=channel_info,how="inner",on="video_id").sort_values("date")
+video_stats
+
+
+fig = px.line(video_stats, x="date", y="views", title='Views over last 10 videos', text='title')
+fig.update_traces(textposition="bottom right")
+fig.show()
+
+
+fig = px.line(video_stats, x="date", y="positivity_score", title='Positivity score over last 10 videos', text='title')
+fig.update_traces(textposition="bottom right")
+fig.show()
+
+def df_cutter(df):
+    IDs_list = df.value_counts('video_id').keys()
+    cut_dfs = []
+    for i, video in enumerate(IDs_list):
+        cut_df = df[df['video_id'] == IDs_list[i]]
+        cut_dfs.append(cut_df)
+    return cut_dfs
+
+
+controversy = []
+cut_dfs = df_cutter(results)
+for df in cut_dfs:
+#     print(df["Negative (%)"].mean())
+    controversy.append(df["Negative (%)"].mean() * df["Positive (%)"].mean())
+IDs_df["controversy"] = controversy
+IDs_df
+
+
+fig = px.line(video_stats, x="date", y="positivity_score", title='Positivity score over last 10 videos', text='title')
+fig.update_traces(textposition="bottom right")
+fig.show()
+
+
+
+video_stats = pd.merge(left=IDs_df,right=channel_info,how="inner",on="video_id").sort_values("date")
+video_stats
+
+fig = px.line(video_stats, x="date", y="controversy", title='Controversy over last 10 videos', text='title')
+fig.update_traces(textposition="bottom right")
+fig.show()
+
+comments_score = pd.read_csv("../streamlit/pages/comment_score.csv",index_col=0)
+
+
+def linear_model(df):
+    import pandas as pd
+    from sklearn.linear_model import LinearRegression
+    import numpy as np
+
+    data = pd.read_csv('streamlit/data/data_for_regression.csv', index_col=0)
+
+    data["dislike_ratio"] = data["dislikes_2021"] / (data["likes_2021"] + data["dislikes_2021"])
+    data = data[['dislike_ratio', 'positivity_score', 'views_2023', 'likes_2023', 'comments_2023', 'genre']]
+    data.dropna(inplace=True)
+
+
+    from sklearn.preprocessing import OneHotEncoder
+
+    genre_ohe = OneHotEncoder(sparse=False, handle_unknown='ignore') # Instanciate One hot encoder
+
+    genre_ohe.fit(data[['genre']]) # Fit one hot encoder
+
+    data[genre_ohe.get_feature_names_out()] = genre_ohe.fit_transform(data[['genre']])
+
+    data.drop(columns=['genre'], inplace = True) # Drop original column
+
+    X = data.drop('dislike_ratio', axis= 1)
+
+    y = data['dislike_ratio']
+
+
+    from sklearn.preprocessing import MinMaxScaler
+
+    minmax_scaler = MinMaxScaler()
+    X_scaled = minmax_scaler.fit_transform(X)
+
+    # Create and fit the linear regression model
+    model = LinearRegression()
+    model.fit(X_scaled, y)
+
+    # Predict the dislikes for the test set
+    df_scaled = df.copy()
+    df_scaled.columns = ["positivity_score", "views_2023", "likes_2023", "comments_2023", "genre"]
+
+    df_scaled[genre_ohe.get_feature_names_out()] = genre_ohe.transform(df[["genre"]])
+    df_scaled.drop(columns=['genre'], inplace = True)
+    df_scaled = minmax_scaler.transform(df_scaled)
+
+    y_pred = model.predict(df_scaled)
+
+    dislikes_pred = (df["likes"] * y_pred)/(1-y_pred)
+    return dislikes_pred
+
+
+dislikes_pred = linear_model(video_stats[["positivity_score","views","likes","comments","genre"]])
+video_stats["pred_dislikes"] = dislikes_pred
+fig = px.bar(video_stats, x='title', y='pred_dislikes', title='Predicted dislikes on recent videos')
+fig.show()
