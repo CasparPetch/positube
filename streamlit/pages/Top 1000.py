@@ -1,4 +1,5 @@
 import streamlit as st
+st.set_page_config(page_title="DataFrame Demo", page_icon="📊")
 import time
 import numpy as np
 import pandas as pd
@@ -108,7 +109,7 @@ def get_useful_stats(df):
 
 positube_path = os.path.dirname(os.path.dirname(os.path.dirname(__file__)))
 
-st.set_page_config(page_title="DataFrame Demo", page_icon="📊")
+
 add_logo()
 
 st.markdown("# Top 1000 popular channels")
