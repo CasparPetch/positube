@@ -17,10 +17,49 @@ st.set_page_config(
     page_title="Positube",
     page_icon="👋",
 )
-
+st.write("")
+st.write("")
+st.write("")
+st.write("")
 st.write("# Welcome to Positube! 👋")
 st.sidebar.success("Select a demo below.")
 
+
+# st.markdown(
+#     """
+#     <style>
+#     .reportview-container {
+#         background: url("url_goes_here")
+#     }
+#    .sidebar .sidebar-content {
+#         background: url("url_goes_here")
+#     }
+#     </style>
+#     """,
+#     unsafe_allow_html=True
+# )
+
+
+
+def get_base64(bin_file):
+    with open(bin_file, 'rb') as f:
+        data = f.read()
+    return base64.b64encode(data).decode()
+
+
+def set_background(png_file):
+    bin_str = get_base64(png_file)
+    page_bg_img = '''
+    <style>
+    .stApp {
+    background-image: url("data:image/png;base64,%s");
+    background-size: cover;
+    }
+    </style>
+    ''' % bin_str
+    st.markdown(page_bg_img, unsafe_allow_html=True)
+
+set_background('streamlit/background.png')
 
 # Object notation
 # st.sidebar.header("This is the header in the sidebar")
@@ -48,10 +87,10 @@ st.sidebar.success("Select a demo below.")
 
 
 images = []
-for file in ["streamlit/Final images/1_copy.png",
-             "streamlit/Final images/2_copy.png",
-             "streamlit/Final images/3_copy.png",
-             "streamlit/Final images/4_copy.png"]:
+for file in ["streamlit/Final images/1.png",
+             "streamlit/Final images/2.png",
+             "streamlit/Final images/3.png",
+             "streamlit/Final images/4.png"]:
 
     with open(file, "rb") as image:
         encoded = base64.b64encode(image.read()).decode()
