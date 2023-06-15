@@ -17,6 +17,9 @@ from io import BytesIO
 st.set_page_config(page_title="Word Cloud", page_icon="📊")
 add_logo()
 
+if "pos_cloud" not in st.session_state.keys():
+    st.session_state["first"] = True
+
 # for key in st.session_state.keys():
 #     st.session_state[key] = None
 
@@ -85,8 +88,10 @@ def main():
             with st.spinner('Assessing Controversial Opinions...'):
                 st.image("http://static.demilked.com/wp-content/uploads/2016/06/gif-animations-replace-loading-screen-17.gif")
                 st.session_state["pos_cloud"], st.session_state["neg_cloud"] = cloud(mask=mask_image, max_word=max_word, max_font=max_font, random_=random_)
+                st.session_state["first"] = False
                 st.experimental_rerun()
-        else:
+
+        if not st.session_state["first"]:
 
             fig1 = plt.figure(figsize=(15,15))
             plt.imshow(st.session_state["pos_cloud"], interpolation="bilinear")
