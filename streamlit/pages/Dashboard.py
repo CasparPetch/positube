@@ -133,62 +133,15 @@ import numpy as np
 
 
 
-IDs_df = pd.read_csv("https://raw.githubusercontent.com/CasparPetch/positube/master/streamlit/data/BenShapiro_IDs_df.csv",index_col=0)
-channel_info = pd.read_csv("https://raw.githubusercontent.com/CasparPetch/positube/master/streamlit/data/BenShapiro_channel_info.csv",index_col=0)
-results = pd.read_csv("https://raw.githubusercontent.com/CasparPetch/positube/master/streamlit/data/BenShapiro_results.csv",index_col=0)
-channel_df = pd.read_csv("https://raw.githubusercontent.com/CasparPetch/positube/master/streamlit/data/BenShapiro_channel_df.csv",index_col=0)
-channel_stats = pd.read_csv("https://raw.githubusercontent.com/CasparPetch/positube/master/streamlit/data/BenShapiro_channel_stats.csv",index_col=0)
-
-
-# df.loc[df['pop'] < 2.e6, 'country'] = 'Other countries' # Represent only large countries
-# fig = px.pie(df, values='pop', names='country', title='Population of European continent')
-# fig.show()
-video_stats = pd.merge(left=IDs_df,right=channel_info,how="inner",on="video_id").sort_values("date")
-video_stats
-
-
-fig = px.line(video_stats, x="date", y="views", title='Views over last 10 videos', text='title')
-fig.update_traces(textposition="bottom right")
-st.plotly_chart(fig, use_container_width=True)
-
-
-fig = px.line(video_stats, x="date", y="positivity_score", title='Positivity score over last 10 videos', text='title')
-fig.update_traces(textposition="bottom right")
-st.plotly_chart(fig, use_container_width=True)
-
-def df_cutter(df):
-    IDs_list = df.value_counts('video_id').keys()
-    cut_dfs = []
-    for i, video in enumerate(IDs_list):
-        cut_df = df[df['video_id'] == IDs_list[i]]
-        cut_dfs.append(cut_df)
-    return cut_dfs
-
-
-controversy = []
-cut_dfs = df_cutter(results)
-for df in cut_dfs:
-#     print(df["Negative (%)"].mean())
-    controversy.append(df["Negative (%)"].mean() * df["Positive (%)"].mean())
-IDs_df["controversy"] = controversy
-IDs_df
-
-
-fig = px.line(video_stats, x="date", y="positivity_score", title='Positivity score over last 10 videos', text='title')
-fig.update_traces(textposition="bottom right")
-st.plotly_chart(fig, use_container_width=True)
+IDs_df = pd.read_csv("data/BenShapiro_IDs_df.csv",index_col=0)
+channel_info = pd.read_csv("data/BenShapiro_channel_info.csv",index_col=0)
+results = pd.read_csv("data/BenShapiro_results.csv",index_col=0)
+channel_df = pd.read_csv("data/BenShapiro_channel_df.csv",index_col=0)
+channel_stats = pd.read_csv("data/BenShapiro_channel_stats.csv",index_col=0)
 
 
 
-video_stats = pd.merge(left=IDs_df,right=channel_info,how="inner",on="video_id").sort_values("date")
-video_stats
-
-fig = px.line(video_stats, x="date", y="controversy", title='Controversy over last 10 videos', text='title')
-fig.update_traces(textposition="bottom right")
-st.plotly_chart(fig, use_container_width=True)
-
-comments_score = pd.read_csv("https://raw.githubusercontent.com/CasparPetch/positube/master/streamlit/pages/comment_score.csv",index_col=0)
-
+comments_score = pd.read_csv("../streamlit/pages/comment_score.csv",index_col=0)
 
 
 def linear_model(df):
@@ -196,7 +149,7 @@ def linear_model(df):
     from sklearn.linear_model import LinearRegression
     import numpy as np
 
-    data = pd.read_csv('https://raw.githubusercontent.com/CasparPetch/positube/master/streamlit/data/data_for_regression.csv', index_col=0)
+    data = pd.read_csv('streamlit/data/data_for_regression.csv', index_col=0)
 
     data["dislike_ratio"] = data["dislikes_2021"] / (data["likes_2021"] + data["dislikes_2021"])
     data = data[['dislike_ratio', 'positivity_score', 'views_2023', 'likes_2023', 'comments_2023', 'genre']]
@@ -244,5 +197,44 @@ video_stats = pd.merge(left=IDs_df,right=channel_info,how="inner",on="video_id")
 dislikes_pred = linear_model(video_stats[["positivity_score","views","likes","comments","genre"]])
 video_stats["pred_dislikes"] = dislikes_pred
 fig = px.bar(video_stats, x='title', y='pred_dislikes', title='Predicted dislikes on recent videos')
+fig.show()
 
-st.plotly_chart(fig, use_container_width=True)
+
+
+fig = px.line(video_stats, x="date", y="views", title='Views over last 10 videos', text='title')
+fig.update_traces(textposition="bottom right")
+fig.show()
+
+
+fig = px.line(video_stats, x="date", y="positivity_score", title='Positivity score over last 10 videos', text='title')
+fig.update_traces(textposition="bottom right")
+fig.show()
+
+def df_cutter(df):
+    IDs_list = df.value_counts('video_id').keys()
+    cut_dfs = []
+    for i, video in enumerate(IDs_list):
+        cut_df = df[df['video_id'] == IDs_list[i]]
+        cut_dfs.append(cut_df)
+    return cut_dfs
+
+
+controversy = []
+cut_dfs = df_cutter(results)
+for df in cut_dfs:
+#     print(df["Negative (%)"].mean())
+    controversy.append(df["Negative (%)"].mean() * df["Positive (%)"].mean())
+IDs_df["controversy"] = controversy
+
+
+fig = px.line(video_stats, x="date", y="positivity_score", title='Positivity score over last 10 videos', text='title')
+fig.update_traces(textposition="bottom right")
+fig.show()
+
+
+
+video_stats = pd.merge(left=IDs_df,right=channel_info,how="inner",on="video_id").sort_values("date")
+
+fig = px.line(video_stats, x="date", y="controversy", title='Controversy over last 10 videos', text='title')
+fig.update_traces(textposition="bottom right")
+fig.show()
