@@ -8,7 +8,7 @@ notebook
 nltk
 transformers
 streamlit==1.11.1
-altair<5
+altair==4.0
 icecream
 youtube-search-python
 
