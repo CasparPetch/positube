@@ -48,23 +48,33 @@ def cloud(mask, max_word, max_font, random_):
 
     positive_str, negative_str = csv_to_doc('comment_score.csv')
 
-    wc = WordCloud(mask=mask, background_color="white", max_words=max_word,
+    wc = WordCloud(mask=mask, height=600,width=600, background_color="white", max_words=max_word,
     stopwords=stopwords, max_font_size=max_font, random_state=random_)
 
-    wc_neg = WordCloud(mask=mask, background_color="white", max_words=max_word,
+    wc_neg = WordCloud(mask=mask, height=600,width=600, background_color="white", max_words=max_word,
     stopwords=stopwords, max_font_size=max_font, random_state=random_)
 
     wc_image = wc.generate(positive_str)
     wc_image2 = wc_neg.generate(negative_str)
 
-    fig, axes = plt.subplots(1,2, gridspec_kw={'width_ratios': [2, 2]})
-    axes[0].imshow(wc_image.recolor(colormap='Greens'), interpolation="bilinear")
-    axes[1].imshow(wc_image2.recolor(colormap='Reds'), interpolation='bilinear')
-    for ax in axes:
-        ax.set_axis_off()
+    # fig, axes = plt.subplots(1,2,figsize=(30,30), gridspec_kw={'width_ratios': [2, 2]})
+    # axes[0].imshow(wc_image.recolor(colormap='Greens'), interpolation="bilinear")
+    # axes[1].imshow(wc_image2.recolor(colormap='Reds'), interpolation='bilinear')
+    # for ax in axes:
+    #     ax.set_axis_off()
+    # # plt.figure(figsize=(500,500))
+    #  # Show images on streamlit
+    # st.pyplot(fig)
 
-     # Show images on streamlit
-    st.pyplot(fig)
+    fig1 = plt.figure(figsize=(15,15))
+    plt.imshow(wc_image.recolor(colormap='Greens'), interpolation="bilinear")
+    plt.axis('off')
+    st.pyplot(fig1)
+
+    fig2 = plt.figure(figsize=(15,15))
+    plt.imshow(wc_image2.recolor(colormap='Reds'), interpolation='bilinear')
+    plt.axis('off')
+    st.pyplot(fig2)
 
 def main():
     # positive_str, negative_str = csv_to_doc('comment_score.csv')
@@ -81,12 +91,12 @@ def main():
             st.write("### Word cloud")
 
     # Defines the local location of the image NEEDS TO BE CHANGED TO URL ON PUBLIC GITHUB REPO
-    image_filename = "yt_logo.png"
+    image_filename = "youtube-logo-png-3566.png"
     current_directory = os.getcwd()
     mask_image_path = os.path.join(current_directory, 'streamlit', image_filename)
 
     # Displays the image on streamlit
-    st.image(mask_image_path, use_column_width=True)
+    st.image(mask_image_path, width = 800)
 
     # Uses image path to create numpy array of image
     mask_image = np.array(Image.open(mask_image_path))
