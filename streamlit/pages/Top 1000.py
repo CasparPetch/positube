@@ -14,6 +14,8 @@ from scripts.channel_search import grab_channel
 from scripts.roberta_demo_day import roberta
 from utils import add_logo
 
+
+
 def filter_dataframe(df: pd.DataFrame) -> pd.DataFrame:
     """
     Adds a UI on top of a dataframe to let viewers filter columns
@@ -112,6 +114,9 @@ positube_path = os.path.dirname(os.path.dirname(os.path.dirname(__file__)))
 
 add_logo()
 
+
+
+
 st.markdown("# Top 1000 popular channels")
 st.sidebar.header("Top 1000")
 st.write(
@@ -133,11 +138,13 @@ if channel_id == "":
     sub_stats = pd.read_csv(os.path.join(os.path.abspath("."),"streamlit","data","topSubscribed.csv"))
     sub_stats["channel_id"] = sub_stats["Youtube Channel"]
 
-
-
-    st.metric(label="Average Negative", value=f'{np.round(top_1000["Negative (%)"].mean(),2)}%',)
-    st.metric(label="Average Neutral", value=f'{np.round(top_1000["Neutral (%)"].mean(),2)}%',)
-    st.metric(label="Average Positive", value=f'{np.round(top_1000["Positive (%)"].mean(),2)}%',)
+    col1, col2, col3 = st.columns(3)
+    with col1:
+        st.metric(label="Average Negative", value=f'{np.round(top_1000["Negative (%)"].mean(),2)}%',)
+    with col2:
+        st.metric(label="Average Neutral", value=f'{np.round(top_1000["Neutral (%)"].mean(),2)}%',)
+    with col3:
+        st.metric(label="Average Positive", value=f'{np.round(top_1000["Positive (%)"].mean(),2)}%',)
     st.metric(label="Overall Positivity", value=f'{np.round(top_1000["Scaler_value"].mean(),2)*100}%')
     st.dataframe(pd.merge(left=top_1000_stats,right=sub_stats.drop("Youtube Channel",axis=1),how="left",on="channel_id"))
 
@@ -146,13 +153,16 @@ if channel_id == "":
 
 
 elif channel_id == "MrBeast":
-
     comments = pd.read_csv(os.path.join(positube_path, 'streamlit', 'data', 'mrbeast_comments.csv'))
     infos = pd.read_csv(os.path.join(positube_path, 'streamlit', 'data', 'mrbeast_infos.csv'))
     IDs = pd.read_csv(os.path.join(positube_path, 'streamlit', 'data', 'mrbeast_videos.csv'))
-    st.metric(label="Average Negative", value=f'{np.round(comments["Negative (%)"].mean(),2)}%', delta=f'{np.round(comments["Negative (%)"].mean() - top_1000["Negative (%)"].mean(),1)}%', delta_color="inverse")
-    st.metric(label="Average Neutral", value=f'{np.round(comments["Neutral (%)"].mean(),2)}%', delta=f'{np.round(comments["Neutral (%)"].mean() - top_1000["Neutral (%)"].mean(),1)}%', delta_color="off")
-    st.metric(label="Average Positive", value=f'{np.round(comments["Positive (%)"].mean(),2)}%', delta=f'{np.round(comments["Positive (%)"].mean() - top_1000["Positive (%)"].mean(),1)}%', delta_color="normal")
+    col1, col2, col3 = st.columns(3)
+    with col1:
+        st.metric(label="Average Negative", value=f'{np.round(comments["Negative (%)"].mean(),2)}%', delta=f'{np.round(comments["Negative (%)"].mean() - top_1000["Negative (%)"].mean(),1)}%', delta_color="inverse")
+    with col2:
+        st.metric(label="Average Neutral", value=f'{np.round(comments["Neutral (%)"].mean(),2)}%', delta=f'{np.round(comments["Neutral (%)"].mean() - top_1000["Neutral (%)"].mean(),1)}%', delta_color="off")
+    with col3:
+        st.metric(label="Average Positive", value=f'{np.round(comments["Positive (%)"].mean(),2)}%', delta=f'{np.round(comments["Positive (%)"].mean() - top_1000["Positive (%)"].mean(),1)}%', delta_color="normal")
     # st.metric(label="Overall Positivity", value=f'{np.round(comments["Scaler_value"].mean(),2)*100}%', delta=f'{np.round(comments["Scaler_value"].mean() - top_1000["Scaler_value"].mean(),1)*100}%', delta_color="normal")
 
     top_1000_stats = get_useful_stats(top_1000)
@@ -192,9 +202,11 @@ else:
     print("comments")
     comments, IDs = roberta(comments)
     print("Done")
-
-
-    st.metric(label="Average Negative", value=f'{np.round(comments["Negative (%)"].mean(),2)}%', delta=np.round(comments["Negative (%)"].mean() - top_1000["Negative (%)"].mean(),2), delta_color="inverse")
-    st.metric(label="Average Neutral", value=f'{np.round(comments["Neutral (%)"].mean(),2)}%', delta=np.round(comments["Neutral (%)"].mean() - top_1000["Neutral (%)"].mean(),2), delta_color="off")
-    st.metric(label="Average Positive", value=f'{np.round(comments["Positive (%)"].mean(),2)}%', delta=np.round(comments["Positive (%)"].mean() - top_1000["Positive (%)"].mean(),2), delta_color="normal")
+    col1, col2, col3 = st.columns(3)
+    with col1:
+        st.metric(label="Average Negative", value=f'{np.round(comments["Negative (%)"].mean(),2)}%', delta=np.round(comments["Negative (%)"].mean() - top_1000["Negative (%)"].mean(),2), delta_color="inverse")
+    with col2:
+        st.metric(label="Average Neutral", value=f'{np.round(comments["Neutral (%)"].mean(),2)}%', delta=np.round(comments["Neutral (%)"].mean() - top_1000["Neutral (%)"].mean(),2), delta_color="off")
+    with col3:
+        st.metric(label="Average Positive", value=f'{np.round(comments["Positive (%)"].mean(),2)}%', delta=np.round(comments["Positive (%)"].mean() - top_1000["Positive (%)"].mean(),2), delta_color="normal")
     st.dataframe(comments)
