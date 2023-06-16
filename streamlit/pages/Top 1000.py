@@ -113,6 +113,29 @@ positube_path = os.path.dirname(os.path.dirname(os.path.dirname(__file__)))
 
 add_logo()
 
+
+
+from st_clickable_images import clickable_images
+import base64
+from streamlit_extras.switch_page_button import switch_page
+images = []
+for file in ["streamlit/positube_logo.png"]:
+
+    with open(file, "rb") as image:
+        encoded = base64.b64encode(image.read()).decode()
+        images.append(f"data:image/jpeg;base64,{encoded}")
+clicked = clickable_images(
+    images,
+    titles=[f"Image #{str(i)}" for i in range(1)],
+    div_style={"position": "relative", "display": "flex", "justify-content": "center", "flex-wrap": "wrap"},
+    img_style={"margin": "20px", "height": "200px"},
+)
+if clicked == 0:
+    switch_page("hello")
+
+
+
+
 st.session_state['channel_id'] = None
 
 st.markdown("# Top 1000 popular channels")
