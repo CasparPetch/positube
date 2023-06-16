@@ -24,6 +24,30 @@ from scripts.formatting import millify
 add_logo()
 
 
+
+
+
+from st_clickable_images import clickable_images
+import base64
+from streamlit_extras.switch_page_button import switch_page
+images = []
+for file in ["streamlit/positube_logo.png"]:
+
+    with open(file, "rb") as image:
+        encoded = base64.b64encode(image.read()).decode()
+        images.append(f"data:image/jpeg;base64,{encoded}")
+clicked = clickable_images(
+    images,
+    titles=[f"Image #{str(i)}" for i in range(1)],
+    div_style={"position": "relative", "display": "flex", "justify-content": "center", "flex-wrap": "wrap"},
+    img_style={"margin": "20px", "height": "200px"},
+)
+if clicked == 0:
+    switch_page("hello")
+
+
+
+
 st.markdown("# Channel Dashboard")
 st.sidebar.header("Channel Dashboard")
 st.write("""#### Discover how controversial your favourite channel is! """)
@@ -120,14 +144,18 @@ if channel_name not in st.session_state.keys():
 
 
                 dislikes_pred = linear_model(video_stats[["positivity_score","views","likes","comments","genre"]])
-                video_stats["pred_dislikes"] = dislikes_pred
-                fig = px.bar(video_stats, x='title', y='pred_dislikes', title='Predicted dislikes on recent videos')
+                video_stats["dislikes_pred"] = dislikes_pred
+                fig = px.bar(video_stats, x='title', y='dislikes_pred', title='Predicted dislikes on recent videos')
+                st.plotly_chart(fig, use_container_width=True)
+
+                video_stats["dislike_ratio"] = video_stats["dislikes_pred"]/(video_stats["likes"]+video_stats["dislikes_pred"])
+                fig = px.bar(video_stats, x='title', y='dislike_ratio', title='Predicted dislike ratio on recent videos')
                 st.plotly_chart(fig, use_container_width=True)
 
 
-                fig = px.line(video_stats, x="date", y="views", title='Views over last 10 videos', text='title')
-                fig.update_traces(textposition="bottom right")
-                st.plotly_chart(fig, use_container_width=True)
+                # fig = px.line(video_stats, x="date", y="views", title='Views over last 10 videos', text='title')
+                # fig.update_traces(textposition="bottom right")
+                # st.plotly_chart(fig, use_container_width=True)
 
 
                 fig = px.line(video_stats, x="date", y="positivity_score", title='Positivity score over last 10 videos', text='title')
@@ -141,15 +169,9 @@ if channel_name not in st.session_state.keys():
                 st.session_state['pos_score_df']["controversy"] = controversy
 
 
-                fig = px.line(video_stats, x="date", y="positivity_score", title='Positivity score over last 10 videos', text='title')
-                fig.update_traces(textposition="bottom right")
-                st.plotly_chart(fig, use_container_width=True)
-
-
 
                 video_stats = pd.merge(left=st.session_state['pos_score_df'],right=st.session_state['channel_info'],how="inner",on="video_id").sort_values("date")
 
-                fig = px.line(video_stats, x="date", y="controversy", title='Controversy over last 10 videos', text='title')
+                fig = px.line(video_stats, x="date", y="controversy", title='Controversy score over last 10 videos', text='title')
                 fig.update_traces(textposition="bottom right")
                 st.plotly_chart(fig, use_container_width=True)
-
