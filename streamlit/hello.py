@@ -111,4 +111,4 @@ if clicked == 3:
      switch_page("Top 1000")
 
 
-st.markdown(f"Image #{clicked} clicked" if clicked > -1 else "No image clicked")
+# st.markdown(f"Image #{clicked} clicked" if clicked > -1 else "No image clicked")
