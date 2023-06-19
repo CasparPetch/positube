@@ -27,3 +27,4 @@ In late 2021, YouTube removed the option to dislike a video. We have created the
 ## Hypothesis 
 
 Our hypothesis was - can we use sentiment analysis on youtube comments to predict the number of dislikes each video would have? The answer: NO!
+# CasparPetch
